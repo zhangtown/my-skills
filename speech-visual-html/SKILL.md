@@ -18,7 +18,7 @@ version: 5.5
 defaultTemplate: 模板-唐朝不存在风格-v5.1.html
 ---
 
-# Speech Visual HTML Generator v5.4
+# Speech Visual HTML Generator v5.5
 
 > **默认风格**：基于"唐朝不存在"项目（2026.07.31 最终版），包含分批飞入封面、内容优先聚焦系统、左文右图布局。
 > 旧版风格（毒教材项目、mg-hide 模式）已归档，新项目优先使用 v5.4（ztEdit 原生格式）。
@@ -153,7 +153,7 @@ defaultTemplate: 模板-唐朝不存在风格-v5.1.html
 
 ---
 
-## ztEdit 原生格式规范（v5.4，生成 HTML 必须遵循）
+## ztEdit 原生格式规范（v5.5，生成 HTML 必须遵循）
 
 > **跨仓库契约声明**：本节实现的「ztEdit 原生格式」契约正本在 `zhangtown/Html-ZT-Edit` 仓库 WORKFLOW.md「二、数据模型」（契约版本 v5.4）。
 > 编辑器端修改契约后，必须同版本更新本节并推送 my-skills；本技能侧升级契约，也必须同步编辑器仓库。
@@ -238,6 +238,9 @@ defaultTemplate: 模板-唐朝不存在风格-v5.1.html
 .focus-group.dim-others .focus-item.zt-focus-active{opacity:1;filter:brightness(1) blur(0);transform:scale(1.12);z-index:3;box-shadow:0 0 50px rgba(196,30,36,.35)}
 /* 文字卡片强调变体 */
 .focus-group.dim-others .focus-item-text.zt-focus-active{opacity:1;transform:scale(1.06);color:var(--red);font-weight:700}
+.zt-hl-sweep{position:relative}
+.zt-hl-sweep::after{content:"";position:absolute;left:0;bottom:-0.18em;height:0.12em;width:100%;background:linear-gradient(90deg,#C41E24,#B8860B);border-radius:2px;transform:scaleX(0);transform-origin:left center;transition:transform .6s cubic-bezier(.25,.46,.45,.94);pointer-events:none}
+.zt-hl-sweep.zt-hl-active::after{transform:scaleX(1)}
 ```
 
 > ⚠️ 激活类统一用 `zt-focus-active`（**不要**用旧的 `zoom-focus`）。
@@ -562,7 +565,7 @@ cur.querySelectorAll('[data-zt-role="subtitle"]').forEach(function(subEl){
     // 翻页时重置本页 focus 状态，保证每次进入都能重播强调动画
     document.querySelectorAll('.focus-item').forEach(function(el){
       delete el.dataset.animDone; delete el.dataset.focusDone;
-      el.classList.remove('zt-focus-active');
+      el.classList.remove('zt-focus-active', 'zt-hl-active', 'zt-hl-sweep');
     });
     document.querySelectorAll('.focus-group').forEach(function(g){ g.classList.remove('dim-others'); });
     // 只有在已播放状态下才同步音频时间
@@ -594,35 +597,79 @@ cur.querySelectorAll('[data-zt-role="subtitle"]').forEach(function(subEl){
     }
   }
 
-  function playAnimation(el, effect, duration, delay, returnSec, easing){
-    // 入场动画实现（可选：focus-*/highlight-sweep 以外效果才需要）
-    if(!el) return;
-    const kfMap = {
-      'zoom-in': { from:{transform:'scale(0.6)',opacity:0}, to:{transform:'scale(1.3)',opacity:1} },
-      'fade-in': { from:{opacity:0}, to:{opacity:1} },
-      'fly-left': { from:{transform:'translateX(-120px)',opacity:0}, to:{transform:'translateX(0)',opacity:1} },
-      'fly-right': { from:{transform:'translateX(120px)',opacity:0}, to:{transform:'translateX(0)',opacity:1} },
-      'fly-top': { from:{transform:'translateY(-120px)',opacity:0}, to:{transform:'translateY(0)',opacity:1} },
-      'fly-bottom': { from:{transform:'translateY(120px)',opacity:0}, to:{transform:'translateY(0)',opacity:1} },
-      'wipe': { from:{transform:'translateX(-24px)',clipPath:'inset(0 100% 0 0)',opacity:1}, to:{transform:'translateX(0)',clipPath:'inset(0 0% 0 0)',opacity:1} },
-      'flip': { from:{transform:'perspective(900px) rotateY(88deg) scale(0.94)',opacity:0}, to:{transform:'perspective(900px) rotateY(0deg) scale(1)',opacity:1} },
-      'blur-in': { from:{transform:'scale(1.08)',filter:'blur(14px)',opacity:0}, to:{transform:'scale(1)',filter:'blur(0px)',opacity:1} },
-      'slide-spin': { from:{transform:'translateX(-140px) rotate(-14deg) scale(0.85)',opacity:0}, to:{transform:'translateX(0) rotate(0deg) scale(1)',opacity:1} }
-    };
-    const kf = kfMap[effect] || { from:{transform:'scale(0.8)',opacity:0}, to:{transform:'scale(1)',opacity:1} };
-    const dur = parseFloat(duration) || 0.8, dly = parseFloat(delay) || 0;
-    // 透传 clipPath/filter 扩展属性（v5.4），并给延迟/回位帧补 'none' 复位
-    function fr(offset, src, reset){
-      const f = { offset, transform: src ? (src.transform||'none') : 'scale(1)', opacity: src ? (src.opacity!=null?src.opacity:1) : 1 };
-      if (kf.from.clipPath || kf.to.clipPath) f.clipPath = reset||!src ? 'none' : (src.clipPath||'none');
-      if (kf.from.filter || kf.to.filter) f.filter = reset||!src ? 'none' : (src.filter||'none');
-      return f;
+  // ===== 原生播放引擎（与 ztEdit src/animEffects.js 完全一致，契约 v5.5）=====
+  // 未知效果 → 跳过（不再 silently 放大）；clipPath/filter 透传；支持回位帧(reset)；fill:none
+  function getEffectKeyframes(effect) {
+    switch (effect) {
+      case 'zoom-in': return { from: { transform: 'scale(0.6)', opacity: 0 }, to: { transform: 'scale(1.3)', opacity: 1 } }
+      case 'zoom-out': return { from: { transform: 'scale(1)', opacity: 1 }, to: { transform: 'scale(0.6)', opacity: 0 } }
+      case 'fade-in': return { from: { opacity: 0 }, to: { opacity: 1 } }
+      case 'fly-left': return { from: { transform: 'translateX(-120px)', opacity: 0 }, to: { transform: 'translateX(0)', opacity: 1 } }
+      case 'fly-right': return { from: { transform: 'translateX(120px)', opacity: 0 }, to: { transform: 'translateX(0)', opacity: 1 } }
+      case 'fly-top': return { from: { transform: 'translateY(-120px)', opacity: 0 }, to: { transform: 'translateY(0)', opacity: 1 } }
+      case 'fly-bottom': return { from: { transform: 'translateY(120px)', opacity: 0 }, to: { transform: 'translateY(0)', opacity: 1 } }
+      case 'bounce': return { from: { transform: 'scale(0.8)', opacity: 0 }, to: { transform: 'scale(1.15)', opacity: 1 } }
+      case 'rotate': return { from: { transform: 'rotate(-15deg) scale(0.9)', opacity: 0 }, to: { transform: 'rotate(0deg) scale(1)', opacity: 1 } }
+      case 'wipe': return { from: { transform: 'translateX(-24px)', clipPath: 'inset(0 100% 0 0)', opacity: 1 }, to: { transform: 'translateX(0)', clipPath: 'inset(0 0% 0 0)', opacity: 1 } }
+      case 'flip': return { from: { transform: 'perspective(900px) rotateY(88deg) scale(0.94)', opacity: 0 }, to: { transform: 'perspective(900px) rotateY(0deg) scale(1)', opacity: 1 } }
+      case 'blur-in': return { from: { transform: 'scale(1.08)', filter: 'blur(14px)', opacity: 0 }, to: { transform: 'scale(1)', filter: 'blur(0px)', opacity: 1 } }
+      case 'slide-spin': return { from: { transform: 'translateX(-140px) rotate(-14deg) scale(0.85)', opacity: 0 }, to: { transform: 'translateX(0) rotate(0deg) scale(1)', opacity: 1 } }
+      default: return null
     }
-    const frames = [];
-    if(dly>0) frames.push(fr(0,null,true));
-    frames.push(fr(dly>0?dly/1:0,kf.from,false), fr(1,kf.to,false));
-    el.animate(frames, { duration: dur*1000, delay: dly*1000, easing: easing || 'ease', fill:'forwards' });
   }
+  function kfFrameEntries(kf, dly, dur, ret, baseTransform) {
+    var totalDur = dur + ret
+    var startOff = dly > 0 ? dly / totalDur : 0
+    var endOff = (dly + dur) / totalDur
+    var usesExtra = !!(kf.from.clipPath || kf.from.filter || kf.to.clipPath || kf.to.filter)
+    function frame(offset, src, reset) {
+      var f = { offset: offset, transform: baseTransform + (reset ? 'scale(1)' : (src.transform || 'none')), opacity: reset ? 1 : (src.opacity != null ? src.opacity : 1) }
+      if (usesExtra) { f.clipPath = reset ? 'none' : (src.clipPath || 'none'); f.filter = reset ? 'none' : (src.filter || 'none') }
+      return f
+    }
+    var keyframes = []
+    if (dly > 0) keyframes.push(frame(0, null, true))
+    keyframes.push(frame(startOff, kf.from, false))
+    keyframes.push(frame(endOff, kf.to, false))
+    if (ret > 0) keyframes.push(frame(1, null, true))
+    return keyframes
+  }
+  function applyStateEffect(el, effect) {
+    if (!el || !effect) return false
+    if (effect === 'highlight-sweep') {
+      if (!el.classList.contains('zt-hl-sweep')) {
+        el.classList.add('zt-hl-sweep')
+        requestAnimationFrame(function () { requestAnimationFrame(function () { el.classList.add('zt-hl-active') }) })
+      } else {
+        el.classList.add('zt-hl-active')
+      }
+      return true
+    }
+    if (effect.indexOf('focus-') === 0) {
+      var grp = el.closest ? el.closest('.focus-group') : null
+      if (grp) grp.classList.add('dim-others')
+      el.classList.add('zt-focus-active')
+      return true
+    }
+    return false
+  }
+  function playAnimation(el, effect, duration, delay, returnSec, easing) {
+    if (!el) return
+    if (!effect) return
+    if (applyStateEffect(el, effect)) return
+    var kf = getEffectKeyframes(effect)
+    if (!kf) { if (typeof console !== 'undefined' && console.warn) console.warn('[ztEdit] 未知动画效果：', effect); return }
+    var dur = parseFloat(duration) || 1
+    var dly = parseFloat(delay) || 0
+    var ret = parseFloat(returnSec) || 0
+    var ease = easing || 'ease'
+    var totalDur = dur + ret
+    var baseTransform = el.style.transform || (getComputedStyle(el).transform && getComputedStyle(el).transform !== 'none' ? getComputedStyle(el).transform : '')
+    if (baseTransform) baseTransform += ' '
+    if (el.getAnimations) el.getAnimations().forEach(function (a) { a.cancel() })
+    el.animate(kfFrameEntries(kf, dly, dur, ret, baseTransform), { duration: totalDur * 1000, easing: ease, fill: 'none' })
+  }
+
 
   function loop(){
     if(!isPlaying) return;
