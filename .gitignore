@@ -1,0 +1,8 @@
+# 超大二进制资源（>100MB，GitHub 单文件上限；换机时单独拷贝）
+*.pyz
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+# Agent 本机标记文件
+.disable_to_model_invocation_migration.json

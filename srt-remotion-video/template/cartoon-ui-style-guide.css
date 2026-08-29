@@ -1,0 +1,1262 @@
+/**
+ * ============================================
+ * 新中式极简国风 CSS UI 设计规范
+ * New Chinese Minimalist Style CSS UI Design Guide
+ * ============================================
+ * 目录 (Table of Contents)
+ * ============================================
+ *
+ * 1.  配色方案 (Color Palette)
+ * 2.  字体规范 (Typography)
+ * 3.  边框与线条 (Borders & Lines)
+ * 4.  阴影效果 (Shadows)
+ * 5.  间距规范 (Spacing)
+ * 6.  布局规范 (Layout)
+ * 7.  动画规范 (Animations)
+ * 8.  动画编排系统 (Animation Orchestration)
+ * 9.  纹理和图案库 (Textures & Patterns)
+ * 10. 组件样式 (Components) — 含 12 种容器类型
+ *     容器: ink-card, cream-card, seal-stamp, seal-badge,
+ *           paper-section, scroll-title, rhombus-list,
+ *           dark-panel, calligraphy-tag, circle-number,
+ *           divider-classical, quote-block
+ * 11. 主容器样式 (Main Containers)
+ * 12. 文字样式 (Text Styles)
+ * 13. 参考资料见 `cartoon-ui-style-guide-reference.md`
+ *
+ * ============================================
+ * 使用范围 (Usage Scope)
+ * ============================================
+ *
+ * 本文件定义：
+ * - 主题变量
+ * - canonical surfaces
+ * - emphasis primitives
+ * - textures / patterns
+ * - composition rules
+ *
+ * 参考示例与速查信息见：
+ * `cartoon-ui-style-guide-reference.md`
+ *
+ * 工作流阶段使用约束：
+ * - 场景规划阶段从本文件选择和编排资源
+ * - 场景实现阶段从本文件提取实现所需定义
+ * - 视觉规则以本文件为准
+ */
+
+/* ============================================
+   1. 配色方案 (Color Palette)
+   ============================================ */
+
+:root {
+  /* ---- 主色调 (Primary Colors) ---- */
+  --primary-red: #8B3A3A;          /* 赭石枣红 - 用于强调、按钮、标签选中态 */
+  --primary-ink: #2C2C2C;          /* 墨色 - 用于深色区块、标题背景 */
+  --primary-seal: #C23B22;         /* 朱红印章色 - 用于印章、徽章、最高强调 */
+
+  /* ---- 辅助色 (Accent Colors) ---- */
+  --accent-gold: #B8860B;          /* 暗金 - 用于细微点缀、序号光晕 */
+  --accent-warm: #D4A574;          /* 暖褐 - 用于渐变点缀、装饰线 */
+  --accent-cream: #EDE6D8;         /* 米褐 - 用于边框、浅色分隔 */
+  --accent-ink-light: #3D3D3D;     /* 浅墨色 - 用于深色区域次要文字 */
+
+  /* ---- 中性色 (Neutral Colors) ---- */
+  --bg-cream: #F5F0E8;             /* 浅米杏色 - 主背景 */
+  --bg-warm: #EDE6D8;             /* 暖米色 - 柔和背景 */
+  --bg-paper: #FAF6F0;            /* 纸白色 - 内容卡片背景 */
+  --bg-dark: #2C2C2C;             /* 深炭墨色 - 深色区块背景 */
+  --text-ink: #1A1A1A;            /* 墨黑色 - 主要文字 */
+  --text-medium: #6B6B6B;         /* 中灰色 - 次要文字 */
+  --text-cream: #F5F0E8;          /* 米白色 - 深色底反白文字 */
+  --text-light: #FFFFFF;           /* 纯白 - 极少数反色场景 */
+
+  /* ---- 装饰色 (Decorative Colors) ---- */
+  --deco-dot: #C4B8A8;            /* 点阵色 - 极细点阵纹理 */
+  --deco-line: #D4C9B8;           /* 浅褐线 - 分隔线、边框 */
+  --deco-soft-red: rgba(195, 59, 34, 0.12); /* 红色半透明覆盖 */
+  --deco-soft-ink: rgba(44, 44, 44, 0.06);  /* 墨色半透明覆盖 */
+  --surface-tint-cream: rgba(245, 240, 232, 0.78);
+  --surface-tint-warm: rgba(237, 230, 216, 0.88);
+  --surface-tint-paper: rgba(250, 246, 240, 0.72);
+  --surface-border-soft: rgba(26, 26, 26, 0.20);
+}
+
+
+/* ============================================
+   2. 字体规范 (Typography)
+   ============================================ */
+
+:root {
+  /* ---- 字体族 (Font Families) ---- */
+  /* 标题字体 - 古典宋体 */
+  --font-title: 'Noto Serif SC', 'Source Han Serif SC', 'STSong', 'SimSun', serif;
+
+  /* 正文字体 - 宋体/书宋 */
+  --font-body: 'Noto Serif SC', 'Source Han Serif SC', 'Noto Sans SC', 'STSong', serif;
+
+  /* 强调字体 - 楷体/行书 */
+  --font-accent: 'ZCOOL XiaoWei', 'Ma Shan Zheng', 'STKaiti', 'KaiTi', cursive;
+
+  /* 装饰字体 - 篆刻风格 */
+  --font-seal: 'ZCOOL XiaoWei', 'Liu Jian Mao Cao', 'STKaiti', cursive;
+
+  /* ---- 字号 (Font Sizes) ---- */
+  --text-hero: 3.75rem;           /* 60px - 主标题/大字 */
+  --text-display: 2.75rem;        /* 44px - 展示标题 */
+  --text-title: 2.25rem;          /* 36px - 副标题 */
+  --text-heading: 1.75rem;        /* 28px - 章节标题 */
+  --text-subtitle: 1.375rem;      /* 22px - 小标题 */
+  --text-large: 1.125rem;         /* 18px - 大号正文 */
+  --text-body: 1rem;              /* 16px - 正文 */
+  --text-small: 0.875rem;         /* 14px - 小号文字 */
+  --text-caption: 0.75rem;        /* 12px - 说明文字 */
+
+  /* ---- 字重 (Font Weights) ---- */
+  --weight-bold: 700;
+  --weight-semibold: 600;
+  --weight-medium: 500;
+  --weight-regular: 400;
+  --weight-light: 300;
+
+  /* ---- 行高 (Line Heights) ---- */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.6;
+  --line-height-relaxed: 1.8;
+  --line-height-loose: 2.0;       /* 疏朗排版 - 国风特色 */
+
+  /* ---- 字间距 (Letter Spacing) ---- */
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.08em;
+  --letter-spacing-wider: 0.15em;
+}
+
+
+/* ============================================
+   3. 边框与线条 (Borders & Lines)
+   ============================================ */
+
+:root {
+  /* ---- 边框粗细 (Border Widths) ---- */
+  --border-thin: 1px;
+  --border-medium: 2px;
+  --border-thick: 3px;
+  --border-frame: 1px;
+
+  /* ---- 边框样式 (Border Styles) ---- */
+  --border-standard: 1px solid var(--deco-line);
+  --border-strong: 2px solid var(--primary-red);
+  --border-ink: 2px solid var(--primary-ink);
+
+  /* ---- 圆角 (Border Radius) ---- */
+  --radius-none: 0;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-full: 9999px;
+  --radius-circle: 50%;
+}
+
+/* 经典细边框 */
+.border-classical {
+  border: var(--border-thin) solid var(--deco-line);
+}
+
+/* 红边强调框 */
+.border-seal {
+  border: var(--border-medium) solid var(--primary-red);
+}
+
+/* 墨色边框 */
+.border-ink {
+  border: var(--border-medium) solid var(--primary-ink);
+}
+
+/* 底部装饰线 */
+.border-bottom-classical {
+  border-bottom: var(--border-thin) solid var(--deco-line);
+  padding-bottom: var(--space-4);
+}
+
+
+/* ============================================
+   4. 阴影效果 (Shadows)
+   ============================================ */
+
+:root {
+  /* ---- 国风柔和阴影 - 极轻微模糊 ---- */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 6px 20px rgba(0, 0, 0, 0.10);
+
+  /* ---- 深色区阴影 ---- */
+  --shadow-dark-sm: 0 1px 3px rgba(0, 0, 0, 0.15);
+  --shadow-dark-md: 0 2px 6px rgba(0, 0, 0, 0.20);
+
+  /* ---- 特殊阴影 ---- */
+  --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.10);
+  --shadow-seal: 0 1px 4px rgba(195, 59, 34, 0.15);
+  --shadow-ink-wash: inset 0 0 30px rgba(44, 44, 44, 0.03);
+}
+
+
+/* ============================================
+   5. 间距规范 (Spacing)
+   ============================================ */
+
+:root {
+  /* ---- 间距比例 (基于 4px) ---- */
+  --space-0: 0;
+  --space-1: 0.25rem;    /* 4px */
+  --space-2: 0.5rem;     /* 8px */
+  --space-3: 0.75rem;    /* 12px */
+  --space-4: 1rem;       /* 16px */
+  --space-5: 1.25rem;    /* 20px */
+  --space-6: 1.5rem;     /* 24px */
+  --space-8: 2rem;       /* 32px */
+  --space-10: 2.5rem;    /* 40px */
+  --space-12: 3rem;      /* 48px */
+  --space-16: 4rem;      /* 64px */
+  --space-20: 5rem;      /* 80px */
+  --space-24: 6rem;      /* 96px */
+
+  /* ---- 语义化间距 ---- */
+  --space-xs: var(--space-2);     /* 8px */
+  --space-sm: var(--space-4);     /* 16px */
+  --space-md: var(--space-6);     /* 24px */
+  --space-lg: var(--space-8);     /* 32px */
+  --space-xl: var(--space-12);    /* 48px */
+  --space-2xl: var(--space-16);   /* 64px */
+}
+
+
+/* ============================================
+   6. 布局规范 (Layout)
+   ============================================ */
+
+:root {
+  /* ---- 最大宽度 ---- */
+  --max-width-xs: 320px;
+  --max-width-sm: 480px;
+  --max-width-md: 640px;
+  --max-width-lg: 860px;
+  --max-width-xl: 1080px;
+  --max-width-2xl: 1400px;
+  --max-width-content: 1080px;
+  --max-width-text: 640px;
+
+  /* ---- 视频尺寸 (Remotion 常用) ---- */
+  --scene-design-width: 1920px;
+  --scene-design-height: 1080px;
+  --video-width-1080p: 1920px;
+  --video-height-1080p: 1080px;
+  --video-width-720p: 1280px;
+  --video-height-720p: 720px;
+  --video-width-square: 1080px;
+  --video-height-square: 1080px;
+  --video-width-vertical: 1080px;
+  --video-height-vertical: 1920px;
+}
+
+
+/* ============================================
+   7. 动画规范 (Animations)
+   ============================================ */
+
+:root {
+  /* ---- 动画时长 ---- */
+  --duration-instant: 0.1s;
+  --duration-fast: 0.25s;
+  --duration-normal: 0.45s;
+  --duration-slow: 0.7s;
+  --duration-slower: 1s;
+  --duration-slowest: 1.4s;
+
+  /* ---- 缓动函数 ---- */
+  /* 标准缓动 */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* 国风沉稳缓动 */
+  --ease-gentle: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-smooth: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-respect: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-ink: cubic-bezier(0.215, 0.61, 0.355, 1);  /* 水墨感 */
+
+  /* 淡出缓动 */
+  --ease-fade-out: cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* ---- 关键帧动画 ---- */
+
+/* 淡入上升 - 温润 */
+@keyframes fade-in-elegant {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 淡入下降 - 用于标题 */
+@keyframes fade-in-down-elegant {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 墨迹展开效果 */
+@keyframes ink-spread {
+  0% {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+/* 从左展开 */
+@keyframes reveal-left {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* 从上展开 - 卷轴效果 */
+@keyframes scroll-reveal {
+  0% {
+    clip-path: inset(0 0 100% 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* 淡入缩放 - 印章效果 */
+@keyframes seal-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 笔迹绘制效果 */
+@keyframes brush-draw {
+  from {
+    stroke-dashoffset: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* 轻微浮动 */
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* 印章按压效果 */
+@keyframes seal-press {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(0.95);
+  }
+  70% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 脉冲强调 - 克制 */
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+
+/* ============================================
+   8. 动画编排系统 (Animation Orchestration)
+   ============================================ */
+
+:root {
+  /* ---- 交错动画间隔 (Stagger Intervals) ---- */
+  --stagger-xs: 30ms;       /* 极快交错 - 密集列表 */
+  --stagger-sm: 60ms;       /* 快速交错 - 标准列表 */
+  --stagger-md: 100ms;      /* 中等交错 - 卡片网格 */
+  --stagger-lg: 150ms;      /* 慢速交错 - 重要元素 */
+  --stagger-xl: 200ms;      /* 极慢交错 - 强调序列 */
+
+  /* ---- 动画序列标准时间点 (Sequence Timing) ---- */
+  /* 场景入场标准流程 */
+  --seq-scene-enter: 0ms;           /* 场景容器出现 */
+  --seq-title-enter: 150ms;         /* 标题出现 */
+  --seq-content-enter: 300ms;       /* 主要内容 */
+  --seq-details-enter: 450ms;       /* 细节/列表项 */
+  --seq-action-enter: 600ms;        /* 操作按钮/CTA */
+  --seq-decoration-enter: 750ms;    /* 装饰元素 */
+}
+
+/* ---- 交错动画工具类 ---- */
+
+.stagger-children {
+  --stagger-delay: var(--stagger-sm);
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: calc(var(--stagger-delay) * 0); }
+.stagger-children > *:nth-child(2) { animation-delay: calc(var(--stagger-delay) * 1); }
+.stagger-children > *:nth-child(3) { animation-delay: calc(var(--stagger-delay) * 2); }
+.stagger-children > *:nth-child(4) { animation-delay: calc(var(--stagger-delay) * 3); }
+.stagger-children > *:nth-child(5) { animation-delay: calc(var(--stagger-delay) * 4); }
+.stagger-children > *:nth-child(6) { animation-delay: calc(var(--stagger-delay) * 5); }
+.stagger-children > *:nth-child(7) { animation-delay: calc(var(--stagger-delay) * 6); }
+.stagger-children > *:nth-child(8) { animation-delay: calc(var(--stagger-delay) * 7); }
+
+/* 交错速度变体 */
+.stagger-xs { --stagger-delay: var(--stagger-xs); }
+.stagger-sm { --stagger-delay: var(--stagger-sm); }
+.stagger-md { --stagger-delay: var(--stagger-md); }
+.stagger-lg { --stagger-delay: var(--stagger-lg); }
+.stagger-xl { --stagger-delay: var(--stagger-xl); }
+
+/* ---- 动画序列关键帧 ---- */
+
+/* 序列入场 - 从下方优雅进入 */
+@keyframes seq-enter-elegant {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 序列入场 - 从左展开 */
+@keyframes seq-reveal-left {
+  0% {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+/* 序列入场 - 缩放出现 */
+@keyframes seq-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 序列退场 - 向上淡出 */
+@keyframes seq-exit-elegant {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+/* ---- 预设动画序列类 ---- */
+
+.seq-enter-elegant {
+  opacity: 0;
+  animation: seq-enter-elegant var(--duration-normal) var(--ease-ink) forwards;
+}
+
+.seq-reveal-left {
+  opacity: 0;
+  animation: seq-reveal-left var(--duration-slow) var(--ease-respect) forwards;
+}
+
+.seq-appear {
+  opacity: 0;
+  animation: seq-appear var(--duration-normal) var(--ease-gentle) forwards;
+}
+
+.seq-exit-elegant {
+  animation: seq-exit-elegant var(--duration-fast) var(--ease-fade-out) forwards;
+}
+
+
+/* ============================================
+   9. 纹理和图案库 (Textures & Patterns)
+   ============================================ */
+
+:root {
+  /* ---- 纸张纹理 (Paper Textures) ---- */
+
+  /* 宣纸纹理 */
+  --texture-xuan-paper: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='xuan'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.04'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23xuan)' opacity='0.06'/%3E%3C/svg%3E");
+
+  /* ---- 点状图案 (Dot Patterns) ---- */
+
+  /* 极细点阵 - 国风纸张质感 */
+  --pattern-dots-fine: radial-gradient(circle, var(--deco-dot) 0.8px, transparent 0.8px);
+  --pattern-dots-fine-size: 16px 16px;
+
+  /* ---- 网格图案 (Grid Patterns) ---- */
+
+  /* 极细网格 */
+  --pattern-grid-fine:
+    linear-gradient(var(--deco-dot) 0.5px, transparent 0.5px),
+    linear-gradient(90deg, var(--deco-dot) 0.5px, transparent 0.5px);
+  --pattern-grid-fine-size: 24px 24px;
+
+  /* 古籍竖线纹理 */
+  --pattern-vertical-lines: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 31px,
+    var(--deco-line) 31px,
+    var(--deco-line) 32px
+  );
+
+  /* ---- 装饰纹理 ---- */
+
+  /* 宣纸背景纹理叠加类 */
+  --texture-paper-overlay: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='rough'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.03'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23rough)'/%3E%3C/svg%3E");
+
+  /* ---- 装饰性分隔线 ---- */
+
+  /* 卷草纹分隔线 */
+  --divider-classical-svg: url("data:image/svg+xml,%3Csvg width='60' height='8' viewBox='0 0 60 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 4 L15 1 L30 7 L45 1 L60 4' stroke='%23D4C9B8' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+
+  /* 细线分隔 */
+  --divider-line-svg: url("data:image/svg+xml,%3Csvg width='20' height='2' viewBox='0 0 20 2' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='20' height='1' fill='%23D4C9B8'/%3E%3C/svg%3E");
+}
+
+/* ---- 纹理应用类 ---- */
+
+/* 点阵纸张背景 */
+.bg-dots {
+  background-image: var(--pattern-dots-fine);
+  background-size: var(--pattern-dots-fine-size);
+}
+
+/* 细网格背景 */
+.bg-grid-fine {
+  background-image: var(--pattern-grid-fine);
+  background-size: var(--pattern-grid-fine-size);
+}
+
+/* 宣纸纹理叠加 */
+.overlay-xuan {
+  position: relative;
+}
+
+.overlay-xuan::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: var(--texture-xuan-paper);
+  pointer-events: none;
+}
+
+/* ---- 装饰性分隔线 ---- */
+
+/* 经典回纹分隔线 */
+.divider-classical {
+  height: 8px;
+  background-image: var(--divider-classical-svg);
+  background-repeat: repeat-x;
+  background-position: center;
+  opacity: 0.6;
+}
+
+/* 细线分隔 */
+.divider-line {
+  height: 1px;
+  background: var(--deco-line);
+}
+
+/* 菱形装饰分隔 */
+.divider-rhombus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  color: var(--deco-line);
+  font-size: var(--text-small);
+}
+
+.divider-rhombus::before,
+.divider-rhombus::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--deco-line);
+}
+
+.divider-rhombus-icon {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--deco-line);
+  transform: rotate(45deg);
+}
+
+
+/* ============================================
+   国风强调效果 (Chinese-style Emphasis)
+   用于教学视频中强调重点内容
+   ============================================ */
+
+/**
+ * 强调元素使用指南：
+ *
+ * 【重要程度与推荐组合】
+ * - 一般强调：红色楷体标签 (.tag-red)
+ * - 重点强调：菱形项目符号 (.rhombus-bullet) + 红色序号
+ * - 最高强调：朱红印章标识 (.seal-stamp-small) + 按压动画
+ * - 流程强调：圆形数字序号 + 色块分组 + 出现顺序
+ * - 对比强调：墨色背景区 vs 米色背景区
+ */
+
+/* ---- 国风标注系列 ---- */
+
+/* 红色标注标签 */
+.tag-red {
+  display: inline-block;
+  font-family: var(--font-accent);
+  color: var(--primary-red);
+  font-size: var(--text-small);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  border-bottom: var(--border-thin) solid var(--primary-red);
+  padding-bottom: var(--space-1);
+}
+
+/* 墨色标注 */
+.tag-ink {
+  display: inline-block;
+  font-family: var(--font-accent);
+  color: var(--primary-ink);
+  font-size: var(--text-small);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+/* ---- 菱形项目符号 ---- */
+
+.rhombus-bullet {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-body);
+  color: var(--text-ink);
+  line-height: var(--line-height-normal);
+}
+
+.rhombus-bullet::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--primary-red);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+/* 菱形变体 - 墨色 */
+.rhombus-bullet-ink::before {
+  background: var(--primary-ink);
+}
+
+/* ---- 圆形数字序号 ---- */
+
+.circle-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--primary-red);
+  color: var(--text-cream);
+  font-family: var(--font-title);
+  font-size: var(--text-small);
+  font-weight: var(--weight-semibold);
+  border-radius: var(--radius-circle);
+  flex-shrink: 0;
+}
+
+.circle-number-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: var(--border-medium) solid var(--primary-red);
+  color: var(--primary-red);
+  font-family: var(--font-title);
+  font-size: var(--text-small);
+  font-weight: var(--weight-semibold);
+  border-radius: var(--radius-circle);
+  flex-shrink: 0;
+}
+
+.circle-number-ink {
+  background: var(--primary-ink);
+  color: var(--text-cream);
+}
+
+/* ---- 印章标识 ---- */
+
+/* 小型方印 - 用于强调关键词/标签 */
+.seal-stamp-small {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--primary-seal);
+  color: var(--primary-seal);
+  font-family: var(--font-seal);
+  font-size: var(--text-small);
+  font-weight: var(--weight-bold);
+  transform: rotate(-3deg);
+  flex-shrink: 0;
+}
+
+/* 圆形印章 - 用于数字/序号 */
+.seal-stamp-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--primary-seal);
+  border-radius: var(--radius-circle);
+  color: var(--primary-seal);
+  font-family: var(--font-seal);
+  font-size: var(--text-subtitle);
+  font-weight: var(--weight-bold);
+  flex-shrink: 0;
+}
+
+/* ---- 强调动画关键帧 ---- */
+
+/* 红色标注绘制动画 */
+@keyframes tag-draw {
+  from {
+    background-size: 0% 100%;
+  }
+  to {
+    background-size: 100% 100%;
+  }
+}
+
+/* 印章按压动画 */
+@keyframes seal-press-effect {
+  0% {
+    transform: scale(1) rotate(-3deg);
+  }
+  40% {
+    transform: scale(0.92) rotate(-3deg);
+  }
+  70% {
+    transform: scale(1.04) rotate(-2deg);
+  }
+  100% {
+    transform: scale(1) rotate(-3deg);
+  }
+}
+
+@keyframes emphasis-glow {
+  0%, 100% {
+    box-shadow: 0 0 6px rgba(195, 59, 34, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(195, 59, 34, 0.35);
+  }
+}
+
+/* ---- 动画应用类 ---- */
+
+.tag-animated {
+  background-size: 0% 100%;
+  animation: tag-draw 0.4s ease-out forwards;
+}
+
+.seal-animated {
+  animation: seal-press-effect 0.5s var(--ease-ink) forwards;
+}
+
+.emphasis-glow {
+  animation: emphasis-glow 2s ease-in-out infinite;
+}
+
+
+/* ============================================
+   10. 组件样式 (Components)
+   ============================================ */
+
+/* 主体承托面规则
+ * - 大面积容器使用米白色半透明纸感，允许宿主底色和点阵轻微透出
+ * - 承托面以暖米色、半透明纸白为主，不出现纯白实体大底板
+ * - 深色区块使用墨色背景 + 米白色文字
+ */
+
+/**
+ * 组件样式是完整的、可直接使用的 UI 组件
+ * 与第 9 章的区别：
+ * - 第 9 章：原子级素材 (纹理变量、背景应用类、分隔线)
+ * - 第 10 章：分子级组件 (完整的卡片、容器、标签等)
+ */
+
+/* ---- 米色纸感卡片 ---- */
+.cream-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.30) 0%, rgba(255, 255, 255, 0.08) 100%),
+    rgba(250, 246, 240, 0.82);
+  border: var(--border-thin) solid var(--surface-border-soft);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  box-shadow:
+    var(--shadow-sm),
+    var(--shadow-ink-wash);
+  position: relative;
+}
+
+/* 宣纸纹理叠加 */
+.cream-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: var(--texture-paper-overlay);
+  pointer-events: none;
+  border-radius: var(--radius-md);
+}
+
+/* ---- 墨色卡片 ---- */
+.ink-card {
+  background:
+    linear-gradient(145deg, var(--primary-ink) 0%, #1A1A1A 100%);
+  border: var(--border-thin) solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  color: var(--text-cream);
+  box-shadow: var(--shadow-dark-md);
+  position: relative;
+}
+
+.ink-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+  border-radius: var(--radius-md);
+}
+
+/* ---- 印章徽章 ---- */
+.seal-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border: 2px solid var(--primary-seal);
+  border-radius: var(--radius-sm);
+  color: var(--primary-seal);
+  font-family: var(--font-seal);
+  font-weight: var(--weight-bold);
+  text-align: center;
+  transform: rotate(-3deg);
+  box-shadow: var(--shadow-seal);
+  position: relative;
+}
+
+.seal-badge-char {
+  font-size: var(--text-title);
+  line-height: 1;
+}
+
+.seal-badge-sub {
+  font-size: var(--text-caption);
+  border-top: 1px solid var(--primary-seal);
+  margin-top: var(--space-1);
+  padding-top: var(--space-1);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+/* 方印 - 大尺寸 */
+.seal-stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3) var(--space-6);
+  border: 2px solid var(--primary-seal);
+  color: var(--primary-seal);
+  font-family: var(--font-seal);
+  font-size: var(--text-large);
+  font-weight: var(--weight-bold);
+  transform: rotate(-2deg);
+  box-shadow: var(--shadow-seal);
+}
+
+/* ---- 宣纸分区 ---- */
+/* 浅米色背景 + 轻微纹理，适合图文内容 */
+.paper-section {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.06) 100%),
+    var(--bg-cream);
+  border: var(--border-thin) solid var(--deco-line);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-ink-wash);
+  position: relative;
+}
+
+.paper-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: var(--texture-paper-overlay);
+  pointer-events: none;
+  border-radius: var(--radius-md);
+}
+
+/* ---- 卷轴标题条 ---- */
+.scroll-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-title);
+  font-size: var(--text-heading);
+  font-weight: var(--weight-bold);
+  color: var(--text-ink);
+  line-height: var(--line-height-tight);
+}
+
+.scroll-title-decoration {
+  display: inline-block;
+  width: 3px;
+  height: 1.5em;
+  background: var(--primary-red);
+  border-radius: var(--radius-sm);
+}
+
+/* ---- 菱形列表 ---- */
+.rhombus-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rhombus-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  color: var(--text-ink);
+  line-height: var(--line-height-relaxed);
+  padding: var(--space-2) 0;
+}
+
+.rhombus-list li::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background: var(--primary-red);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+/* ---- 深色面板 ---- */
+.dark-panel {
+  background:
+    linear-gradient(145deg, var(--primary-ink) 0%, #222222 100%);
+  border: var(--border-thin) solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
+  color: var(--text-cream);
+  box-shadow: var(--shadow-dark-md);
+}
+
+.dark-panel-text {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  color: var(--text-cream);
+  line-height: var(--line-height-relaxed);
+  opacity: 0.85;
+}
+
+/* 深色区轻微装饰光 */
+.dark-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+}
+
+/* ---- 书法标签 ---- */
+.calligraphy-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-accent);
+  font-size: var(--text-small);
+  color: var(--primary-red);
+  letter-spacing: var(--letter-spacing-wide);
+  border: var(--border-thin) solid var(--primary-red);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+}
+
+.calligraphy-tag-ink {
+  color: var(--text-ink);
+  border-color: var(--text-medium);
+}
+
+/* ---- 圆形数字序号（组合使用） ---- */
+.numbered-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  font-family: var(--font-body);
+}
+
+/* ---- 经典引用块 ---- */
+.quote-block {
+  position: relative;
+  padding: var(--space-md) var(--space-lg);
+  padding-left: var(--space-10);
+  font-family: var(--font-body);
+  font-size: var(--text-large);
+  color: var(--text-medium);
+  line-height: var(--line-height-relaxed);
+  border-left: var(--border-medium) solid var(--deco-line);
+  font-style: italic;
+}
+
+.quote-block::before {
+  content: '「';
+  position: absolute;
+  left: var(--space-4);
+  top: 0;
+  font-size: var(--text-title);
+  color: var(--deco-line);
+  font-family: var(--font-title);
+  line-height: 1;
+}
+
+/* ---- 标签/徽章 ---- */
+.badge {
+  display: inline-block;
+  background: var(--primary-red);
+  color: var(--text-cream);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
+  font-family: var(--font-body);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.badge-outline {
+  background: transparent;
+  color: var(--primary-red);
+  border: var(--border-thin) solid var(--primary-red);
+}
+
+.badge-ink {
+  background: var(--primary-ink);
+  color: var(--text-cream);
+}
+
+
+/* ============================================
+   11. 主容器样式 (Main Containers)
+   ============================================ */
+
+/* 主画布 */
+.main-canvas {
+  background: var(--bg-cream);
+  border: var(--border-thin) solid var(--deco-line);
+  border-radius: var(--radius-sm);
+  padding: var(--space-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 内容区域 */
+.content-area {
+  background: rgba(250, 246, 240, 0.70);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  backdrop-filter: blur(2px);
+}
+
+/* 场景容器 (Remotion) */
+.scene-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  position: relative;
+}
+
+
+/* ============================================
+   12. 文字样式 (Text Styles)
+   ============================================ */
+
+/* 主标题 - 宋体粗 */
+.title-hero {
+  font-family: var(--font-title);
+  font-size: var(--text-hero);
+  font-weight: var(--weight-bold);
+  color: var(--text-ink);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+/* 墨色标题 - 用于深色背景 */
+.title-hero-light {
+  font-family: var(--font-title);
+  font-size: var(--text-hero);
+  font-weight: var(--weight-bold);
+  color: var(--text-cream);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+/* 红色强调标题 */
+.title-seal {
+  font-family: var(--font-title);
+  font-size: var(--text-display);
+  font-weight: var(--weight-bold);
+  color: var(--primary-red);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+/* 副标题 */
+.subtitle {
+  font-family: var(--font-body);
+  font-size: var(--text-subtitle);
+  font-weight: var(--weight-regular);
+  color: var(--text-medium);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+}
+
+/* 正文 */
+.body-text {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  color: var(--text-ink);
+  line-height: var(--line-height-relaxed);
+}
+
+/* 正文 - 深色背景用 */
+.body-text-light {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  color: var(--text-cream);
+  line-height: var(--line-height-relaxed);
+  opacity: 0.85;
+}
+
+/* 强调文字 - 楷书 */
+.text-emphasis {
+  font-family: var(--font-accent);
+  font-weight: var(--weight-semibold);
+  color: var(--primary-red);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+/* 小字标注 */
+.text-annotation {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--text-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+
+/* ============================================
+   13. 参考资料
+   ============================================ */
+
+/**
+ * 示例、速查表与演示用法见：
+ * `cartoon-ui-style-guide-reference.md`
+ */
