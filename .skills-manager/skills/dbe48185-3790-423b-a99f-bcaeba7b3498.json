@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "dbe48185-3790-423b-a99f-bcaeba7b3498",
+  "path": "eac-desktop-tips",
+  "path_key": "eac-desktop-tips",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

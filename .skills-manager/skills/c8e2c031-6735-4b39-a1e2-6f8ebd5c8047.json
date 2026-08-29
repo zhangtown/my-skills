@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "c8e2c031-6735-4b39-a1e2-6f8ebd5c8047",
+  "path": "srt-video-news",
+  "path_key": "srt-video-news",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}
