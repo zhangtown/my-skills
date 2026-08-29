@@ -155,6 +155,10 @@ defaultTemplate: 模板-唐朝不存在风格-v5.1.html
 
 ## ztEdit 原生格式规范（v5.3，生成 HTML 必须遵循）
 
+> **跨仓库契约声明**：本节实现的「ztEdit 原生格式」契约正本在 `zhangtown/Html-ZT-Edit` 仓库 WORKFLOW.md「二、数据模型」（契约版本 v5.3）。
+> 编辑器端修改契约后，必须同版本更新本节并推送 my-skills；本技能侧升级契约，也必须同步编辑器仓库。
+> 两端版本可用 ztEdit 仓库的 `npm run check:contract` 校验。
+
 > **生成目的与流水线**：本技能生成的 HTML 要同时满足两个用途——①浏览器双击自动播放（录屏成视频）；②导入 ztEdit 可视化编辑器后，能直接看到「字幕↔元素」绑定关系，可改字幕/改绑定/改动画/调时间轴，导出后仍保持效果。
 >
 > 为此，生成时**必须采用 ztEdit 原生格式**：DOM 字幕 + `data-zt-id` 元素标识 + `data-zt-bound-to` 绑定 + `data-zt-anim-effect` 动画 + `focus-group` 分组。**不再使用** `data-trigger`/`mg-hide`/`mg-pop`/旧 `data-focus`/`zoom-focus` 等旧属性。
