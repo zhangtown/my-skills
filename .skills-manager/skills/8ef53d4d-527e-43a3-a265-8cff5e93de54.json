@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "8ef53d4d-527e-43a3-a265-8cff5e93de54",
+  "path": "video-outline-planner",
+  "path_key": "video-outline-planner",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

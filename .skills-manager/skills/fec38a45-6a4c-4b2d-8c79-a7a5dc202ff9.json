@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "fec38a45-6a4c-4b2d-8c79-a7a5dc202ff9",
+  "path": "srt-remotion-video",
+  "path_key": "srt-remotion-video",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

@@ -6,3 +6,6 @@ __pycache__/
 .DS_Store
 # Agent 本机标记文件
 .disable_to_model_invocation_migration.json
+Thumbs.db
+*.tmp
+.skills-manager.lock

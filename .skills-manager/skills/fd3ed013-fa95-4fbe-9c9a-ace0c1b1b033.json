@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "fd3ed013-fa95-4fbe-9c9a-ace0c1b1b033",
+  "path": "kimi-slides",
+  "path_key": "kimi-slides",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

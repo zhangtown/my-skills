@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "c0303939-0a9d-40dd-8481-76b09cb9a5cd",
+  "path": "kimi-pptx",
+  "path_key": "kimi-pptx",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "0b68ec2b-0d17-451c-bc92-0af28ee500c1",
+  "path": "bid-proposal",
+  "path_key": "bid-proposal",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

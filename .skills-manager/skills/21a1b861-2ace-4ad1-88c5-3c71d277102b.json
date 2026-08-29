@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "21a1b861-2ace-4ad1-88c5-3c71d277102b",
+  "path": "meeting-recap",
+  "path_key": "meeting-recap",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

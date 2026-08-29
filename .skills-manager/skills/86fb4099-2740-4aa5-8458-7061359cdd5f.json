@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "86fb4099-2740-4aa5-8458-7061359cdd5f",
+  "path": "process-doc",
+  "path_key": "process-doc",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

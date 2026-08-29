@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "0fca528d-9f36-4818-9315-7a700aaed406",
+  "path": "vo-pipeline",
+  "path_key": "vo-pipeline",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

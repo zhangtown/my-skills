@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "3cd1014a-4f09-4f54-a68c-d3971011f023",
+  "path": "edge-tts",
+  "path_key": "edge-tts",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

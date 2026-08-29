@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "d8dd8dc7-99c6-4511-8d20-6ab08045b172",
+  "path": "kimi-excel",
+  "path_key": "kimi-excel",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

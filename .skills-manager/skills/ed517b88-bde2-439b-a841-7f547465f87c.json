@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "ed517b88-bde2-439b-a841-7f547465f87c",
+  "path": "kimi-pptx-swarm",
+  "path_key": "kimi-pptx-swarm",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

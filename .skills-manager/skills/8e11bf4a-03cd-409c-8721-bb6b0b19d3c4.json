@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "8e11bf4a-03cd-409c-8721-bb6b0b19d3c4",
+  "path": "fundraising-bp-planner",
+  "path_key": "fundraising-bp-planner",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "3f9377cf-b621-4aac-820a-17db4eba3b35",
+  "path": "chinese-gov-platform-application",
+  "path_key": "chinese-gov-platform-application",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

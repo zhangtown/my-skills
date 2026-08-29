@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "4a8f7e70-1295-4e90-a8f9-f2103de111a7",
+  "path": "kimi-design-skill",
+  "path_key": "kimi-design-skill",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}
