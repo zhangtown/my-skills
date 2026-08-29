@@ -15,7 +15,7 @@ triggers:
   - "视频脚本"
   - "MG动画"
 version: 5.5
-defaultTemplate: 模板-唐朝不存在风格-v5.1.html
+defaultTemplate: 模板-唐朝不存在风格-v5.5.html
 ---
 
 # Speech Visual HTML Generator v5.5
@@ -228,7 +228,7 @@ defaultTemplate: 模板-唐朝不存在风格-v5.1.html
 - `showSlide()` 翻页时清除 `animDone`/`focusDone` 标记 + 移除 `zt-focus-active`/`dim-others` 类
 - 保留 ← → 方向键/点击翻页/空格启动/自动播放
 
-> 完整播放脚本参见 `模板-唐朝不存在风格-v5.1.html` 的 `<script>` 块（已转为 ztEdit 原生格式，可直接复制结构）。
+> 完整播放脚本参见 `模板-唐朝不存在风格-v5.5.html` 的 `<script>` 块（已转为 ztEdit 原生格式，可直接复制结构）。
 
 ### 必须包含的 CSS（focus 联动）
 
@@ -537,7 +537,7 @@ cur.querySelectorAll('[data-zt-role="subtitle"]').forEach(function(subEl){
 
 #### 最小可复用播放脚本模板
 
-下面是一段可直接嵌入 HTML 的完整播放脚本（ztEdit 原生格式），行为与 `模板-唐朝不存在风格-v5.1.html` 一致。生成新页面时应以此为基础，避免自行简化导致切页/动画行为不一致。
+下面是一段可直接嵌入 HTML 的完整播放脚本（ztEdit 原生格式），行为与 `模板-唐朝不存在风格-v5.5.html` 一致。生成新页面时应以此为基础，避免自行简化导致切页/动画行为不一致。
 
 ```html
 <script>
@@ -1171,5 +1171,5 @@ v4.0 的 `mg-hide → mg-pop` 模式已废弃。现在统一用 **ztEdit 原生 
   - 改造：Phase 3/4/5 生成规则、示例、验证全面改为 ztEdit 原生格式
   - 改造：播放脚本内嵌 ztEdit 风格（从 DOM 字幕构建 subtitles[]，字幕绑定触发动画）
   - 改造：激活类统一为 zt-focus-active（废弃 zoom-focus）
-  - 同步：参考模板 `模板-唐朝不存在风格-v5.1.html` 已转为 ztEdit 原生格式（161 字幕→DOM，52 元素→focus-zoom 绑定）
+  - 同步：参考模板 `模板-唐朝不存在风格-v5.5.html` 已转为 ztEdit 原生格式（161 字幕→DOM，52 元素→focus-zoom 绑定）
   - 目的：生成的 HTML 双击可录屏播放，导入 ztEdit 可改字幕/绑定/动画/时间轴
