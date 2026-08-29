@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "6b37a4b9-efcf-45b7-b200-89de9770d82b",
+  "path": "wechat-post-craft-2",
+  "path_key": "wechat-post-craft-2",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}
