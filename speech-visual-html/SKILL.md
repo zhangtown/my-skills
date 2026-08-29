@@ -14,7 +14,7 @@ triggers:
   - "国风"
   - "视频脚本"
   - "MG动画"
-version: 5.4
+version: 5.5
 defaultTemplate: 模板-唐朝不存在风格-v5.1.html
 ---
 
@@ -153,9 +153,9 @@ defaultTemplate: 模板-唐朝不存在风格-v5.1.html
 
 ---
 
-## ztEdit 原生格式规范（v5.3，生成 HTML 必须遵循）
+## ztEdit 原生格式规范（v5.4，生成 HTML 必须遵循）
 
-> **跨仓库契约声明**：本节实现的「ztEdit 原生格式」契约正本在 `zhangtown/Html-ZT-Edit` 仓库 WORKFLOW.md「二、数据模型」（契约版本 v5.3）。
+> **跨仓库契约声明**：本节实现的「ztEdit 原生格式」契约正本在 `zhangtown/Html-ZT-Edit` 仓库 WORKFLOW.md「二、数据模型」（契约版本 v5.4）。
 > 编辑器端修改契约后，必须同版本更新本节并推送 my-skills；本技能侧升级契约，也必须同步编辑器仓库。
 > 两端版本可用 ztEdit 仓库的 `npm run check:contract` 校验。
 
@@ -183,8 +183,14 @@ defaultTemplate: 模板-唐朝不存在风格-v5.1.html
 | `fly-left`/`fly-right`/`fly-top`/`fly-bottom` | 入场 | 从各方向飞入 |
 | `bounce` | 入场 | 弹跳出现 |
 | `rotate` | 入场 | 旋转出现 |
+| `wipe` | 入场（v5.4） | 左→右擦除显现（clip-path，适合长图分段、横幅） |
+| `flip` | 入场（v5.4） | 3D 翻转出现（rotateY 88°→0°，带透视） |
+| `blur-in` | 入场（v5.4） | 虚化到清晰（blur 14px→0 + 轻微缩放回落），文字/标题聚焦感 |
+| `slide-spin` | 入场（v5.4） | 旋转滑入（平移+旋转+缩放复合，卡片/徽章） |
+| `highlight-sweep` | **强调**（v5.4） | 划线强调：底部朱红→暗金渐变划线从左向右扫出（类驱动持续态，同 focus-*；不压暗同组） |
 
-> **默认用 `focus-zoom`**（强调风格，元素一开始全可见，逐个高亮），与本项目「内容优先展示」原则一致。仅当确实需要元素「从无到有」揭示时才用入场类。
+> **默认用 `focus-zoom`**（强调风格，元素一开始全可见，逐个高亮），与本项目「内容优先展示」原则一致。仅当确实需要元素「从无到有」揭示时才用入场类。文字重点标记首选 `highlight-sweep`。
+> 强调类共两种：`focus-*`（放大高亮+同组变暗）与 `highlight-sweep`（划线，不动同组）——都由播放脚本按「类切换持续态」处理，不走关键帧。
 
 ### 完整 slide 骨架示例
 
@@ -489,7 +495,9 @@ HTML生成器（根据 layout + surface + beatPlan 生成滑页HTML）
 | 效果 | 类型 | 触发方式 |
 |:---|:---|:---|
 | `focus-zoom`（默认首选） | 强调 | 加 `zt-focus-active` 类 + 同组 `dim-others`，持续状态，触发一次 |
+| `highlight-sweep` | 强调 | 加 `zt-hl-sweep` 基类 + 触发时 `zt-hl-active` 类，划线扫出，持续状态；不 dim 同组 |
 | `zoom-in`/`fade-in`/`fly-*`/`bounce`/`rotate` | 入场 | 调用 `playAnimation()` 关键帧动画，0.5s 窗口内触发一次 |
+| `wipe`/`flip`/`blur-in`/`slide-spin` | 入场（v5.4） | 同上；`wipe` 用 clipPath、`blur-in` 用 filter 关键帧属性（脚本帧构建需透传这两个属性） |
 
 > 强调类元素必须放在 `<div class="focus-group">` 内并加 `class="focus-item"`，实现「目标放大高亮 + 同组变暗」联动。
 
@@ -587,7 +595,7 @@ cur.querySelectorAll('[data-zt-role="subtitle"]').forEach(function(subEl){
   }
 
   function playAnimation(el, effect, duration, delay, returnSec, easing){
-    // 入场动画实现（可选：focus-* 以外效果才需要）
+    // 入场动画实现（可选：focus-*/highlight-sweep 以外效果才需要）
     if(!el) return;
     const kfMap = {
       'zoom-in': { from:{transform:'scale(0.6)',opacity:0}, to:{transform:'scale(1.3)',opacity:1} },
@@ -595,11 +603,25 @@ cur.querySelectorAll('[data-zt-role="subtitle"]').forEach(function(subEl){
       'fly-left': { from:{transform:'translateX(-120px)',opacity:0}, to:{transform:'translateX(0)',opacity:1} },
       'fly-right': { from:{transform:'translateX(120px)',opacity:0}, to:{transform:'translateX(0)',opacity:1} },
       'fly-top': { from:{transform:'translateY(-120px)',opacity:0}, to:{transform:'translateY(0)',opacity:1} },
-      'fly-bottom': { from:{transform:'translateY(120px)',opacity:0}, to:{transform:'translateY(0)',opacity:1} }
+      'fly-bottom': { from:{transform:'translateY(120px)',opacity:0}, to:{transform:'translateY(0)',opacity:1} },
+      'wipe': { from:{transform:'translateX(-24px)',clipPath:'inset(0 100% 0 0)',opacity:1}, to:{transform:'translateX(0)',clipPath:'inset(0 0% 0 0)',opacity:1} },
+      'flip': { from:{transform:'perspective(900px) rotateY(88deg) scale(0.94)',opacity:0}, to:{transform:'perspective(900px) rotateY(0deg) scale(1)',opacity:1} },
+      'blur-in': { from:{transform:'scale(1.08)',filter:'blur(14px)',opacity:0}, to:{transform:'scale(1)',filter:'blur(0px)',opacity:1} },
+      'slide-spin': { from:{transform:'translateX(-140px) rotate(-14deg) scale(0.85)',opacity:0}, to:{transform:'translateX(0) rotate(0deg) scale(1)',opacity:1} }
     };
     const kf = kfMap[effect] || { from:{transform:'scale(0.8)',opacity:0}, to:{transform:'scale(1)',opacity:1} };
     const dur = parseFloat(duration) || 0.8, dly = parseFloat(delay) || 0;
-    el.animate([kf.from, kf.to], { duration: dur * 1000, delay: dly * 1000, easing: easing || 'ease', fill:'forwards' });
+    // 透传 clipPath/filter 扩展属性（v5.4），并给延迟/回位帧补 'none' 复位
+    function fr(offset, src, reset){
+      const f = { offset, transform: src ? (src.transform||'none') : 'scale(1)', opacity: src ? (src.opacity!=null?src.opacity:1) : 1 };
+      if (kf.from.clipPath || kf.to.clipPath) f.clipPath = reset||!src ? 'none' : (src.clipPath||'none');
+      if (kf.from.filter || kf.to.filter) f.filter = reset||!src ? 'none' : (src.filter||'none');
+      return f;
+    }
+    const frames = [];
+    if(dly>0) frames.push(fr(0,null,true));
+    frames.push(fr(dly>0?dly/1:0,kf.from,false), fr(1,kf.to,false));
+    el.animate(frames, { duration: dur*1000, delay: dly*1000, easing: easing || 'ease', fill:'forwards' });
   }
 
   function loop(){
@@ -1056,6 +1078,11 @@ v4.0 的 `mg-hide → mg-pop` 模式已废弃。现在统一用 **ztEdit 原生 
 
 ## 版本历史
 
+- v5.5: 动画扩充 CSS 档（契约同步升级 v5.3→v5.4，与 ztEdit 编辑器同发）
+  - 新增入场效果：`wipe` 擦除滑入（clip-path）、`flip` 3D翻转、`blur-in` 虚化聚焦（filter）、`slide-spin` 旋转滑入
+  - 新增强调效果：`highlight-sweep` 划线强调（底部渐变划线扫出，类驱动持续态，不 dim 同组）
+  - 关键帧模型扩展：from/to 支持 `clipPath`/`filter` 扩展属性，延迟/回位帧自动补 `none` 复位
+  - 播放脚本模板 kfMap 与帧构建同步更新；编辑器下拉/预览/导出三端同发
 - v1.0: 初始版本，字幕同步、影视级字幕、自动播放
 - v2.0: 基于"历史不会忘记"迭代
 - v3.0-v3.4: 基于多个项目迭代
