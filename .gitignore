@@ -13,11 +13,12 @@ Thumbs.db
 qwen-tts__skillhub/model_local/
 qwen-tts__skillhub/hf_cache/
 
-# skills-manager: oversized skills excluded from backup (auto-managed)
-/qwen-tts/
-/.skills-manager/skills/1af82b45-ba71-4556-9d69-44007f301bc0.json
-# skills-manager: end oversized skills
 
 # kimi-pptx 系列打包的 DSL 运行时（约 250MB，超 GitHub 100MB 单文件上限；本地使用，不入库，换机单独拷贝）
 kimi-pptx/scripts/kimi_ppt_dsl.pyz
 kimi-pptx-swarm/scripts/kimi_ppt_dsl.pyz
+
+# skills-manager: oversized skills excluded from backup (auto-managed)
+/qwen-tts/
+/.skills-manager/skills/1af82b45-ba71-4556-9d69-44007f301bc0.json
+# skills-manager: end oversized skills
