@@ -4,7 +4,9 @@
   "path": "usage-probe",
   "path_key": "usage-probe",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "工具"
+  ],
   "source": {
     "type": "import",
     "ref": null,

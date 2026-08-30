@@ -4,7 +4,9 @@
   "path": "vo-pipeline",
   "path_key": "vo-pipeline",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "音视频"
+  ],
   "source": {
     "type": "import",
     "ref": null,

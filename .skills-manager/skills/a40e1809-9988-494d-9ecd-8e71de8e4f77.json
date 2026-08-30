@@ -4,7 +4,9 @@
   "path": "vision-helper",
   "path_key": "vision-helper",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "工具"
+  ],
   "source": {
     "type": "local",
     "ref": null,

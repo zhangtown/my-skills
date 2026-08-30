@@ -4,7 +4,9 @@
   "path": "srt-remotion-video",
   "path_key": "srt-remotion-video",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "音视频"
+  ],
   "source": {
     "type": "import",
     "ref": null,

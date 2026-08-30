@@ -4,7 +4,9 @@
   "path": "video-outline-planner",
   "path_key": "video-outline-planner",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "写作内容"
+  ],
   "source": {
     "type": "import",
     "ref": null,

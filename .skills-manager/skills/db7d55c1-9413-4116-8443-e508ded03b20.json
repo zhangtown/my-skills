@@ -4,7 +4,9 @@
   "path": "ui-blueprint",
   "path_key": "ui-blueprint",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "设计前端"
+  ],
   "source": {
     "type": "import",
     "ref": null,

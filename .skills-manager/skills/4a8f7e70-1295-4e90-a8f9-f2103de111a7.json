@@ -4,7 +4,9 @@
   "path": "kimi-design-skill",
   "path_key": "kimi-design-skill",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "设计前端"
+  ],
   "source": {
     "type": "import",
     "ref": null,

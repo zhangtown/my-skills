@@ -4,7 +4,9 @@
   "path": "fundraising-bp-planner",
   "path_key": "fundraising-bp-planner",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "写作内容"
+  ],
   "source": {
     "type": "import",
     "ref": null,

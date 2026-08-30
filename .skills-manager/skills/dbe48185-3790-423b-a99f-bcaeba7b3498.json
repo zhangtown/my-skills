@@ -4,7 +4,9 @@
   "path": "eac-desktop-tips",
   "path_key": "eac-desktop-tips",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "工具"
+  ],
   "source": {
     "type": "local",
     "ref": null,
