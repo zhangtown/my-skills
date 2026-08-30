@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "007b049b-f00f-4f5e-8188-bbac6999e5ec",
+  "path": "video-publisher",
+  "path_key": "video-publisher",
+  "enabled": true,
+  "tags": [
+    "音视频"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/oil-oil/video-publisher-skill.git",
+    "subpath": "video-publisher",
+    "branch": null
+  }
+}
