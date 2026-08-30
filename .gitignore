@@ -12,3 +12,7 @@ Thumbs.db
 # 本地模型权重（大资产，不入库，换机单独拷贝；技能代码仍入库）
 qwen-tts__skillhub/model_local/
 qwen-tts__skillhub/hf_cache/
+
+# skills-manager: oversized skills excluded from backup (auto-managed)
+/qwen-tts/
+# skills-manager: end oversized skills
