@@ -9,3 +9,6 @@ __pycache__/
 Thumbs.db
 *.tmp
 .skills-manager.lock
+# 本地模型权重（大资产，不入库，换机单独拷贝；技能代码仍入库）
+qwen-tts__skillhub/model_local/
+qwen-tts__skillhub/hf_cache/

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Draw.io 转 Visio"
+  short_description: "将 Draw.io 图本地转换为可编辑 Visio VSDX 并验证"
+  default_prompt: "Use $drawio-to-visio to convert this Draw.io file into a validated editable Visio VSDX file."
