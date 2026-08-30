@@ -5,10 +5,10 @@
   "sort_order": 3,
   "tools": {
     "claude_code": false,
-    "codex": true,
-    "deepseek_harness": true,
-    "kimi": true,
-    "pi": false,
+    "codex": false,
+    "deepseek_harness": false,
+    "kimi": false,
+    "pi": true,
     "workbuddy": false,
     "zcode": false
   }
