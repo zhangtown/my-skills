@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "ac183454-c222-410c-bf7a-bd0aa2524407",
+  "path": "grill-me",
+  "path_key": "grill-me",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/RobMitt/grill-me-skill",
+    "subpath": null,
+    "branch": null
+  }
+}
