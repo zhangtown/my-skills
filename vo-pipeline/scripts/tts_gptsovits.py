@@ -128,12 +128,30 @@ def main():
     for i, s in enumerate(sents):
         print(f"合成 {i + 1}/{len(sents)}: {s[:24]}…")
         piece = tmp / f"{i:04d}.wav"
-        try:
-            tts_call(args.api, {**payload_base, "text": s}, piece)
-        except Exception as e:
-            raise SystemExit(f"[失败] 第 {i + 1} 句调用 api_v2 失败（服务没启动？）: {e}")
-        if params is None:
-            params = wav_params(piece)
+        # 防截断：GPT-SoVITS 偶发提前 EOS，句子时长明显低于预期时自动重试，保留最长结果
+        expect = len(s) / (3.8 * max(args.speed, 0.1)) + 0.5
+        min_ok = max(0.5, expect * 0.45)
+        best_dur, best_path = 0.0, None
+        for attempt in range(3):
+            try:
+                tts_call(args.api, {**payload_base, "text": s}, piece)
+            except Exception as e:
+                raise SystemExit(f"[失败] 第 {i + 1} 句调用 api_v2 失败（服务没启动？）: {e}")
+            if params is None:
+                params = wav_params(piece)
+            dur = wav_params(piece).nframes / params.framerate
+            if dur > best_dur:
+                best_dur = dur
+                best_path = piece.with_name(f"{i:04d}-best.wav")
+                best_path.write_bytes(piece.read_bytes())
+            if dur >= min_ok:
+                break
+            print(f"  [重试] 仅 {dur:.2f}s（预期≥{min_ok:.1f}s），再合成一次…")
+        if best_dur < min_ok:
+            print(f"  [警告] 第 {i + 1} 句 {best_dur:.2f}s 仍短于预期，采用最长结果")
+        if best_path and best_path.exists():
+            piece.write_bytes(best_path.read_bytes())
+            best_path.unlink()
         dur = wav_params(piece).nframes / params.framerate
         cues.append({"start": cursor, "end": cursor + dur, "text": s})
         pieces.append(piece)

@@ -5,6 +5,9 @@
   "sort_order": 2,
   "tools": {
     "claude_code": true,
+    "codex": true,
+    "deepseek_harness": true,
+    "kimi": true,
     "pi": true,
     "workbuddy": true,
     "zcode": true
