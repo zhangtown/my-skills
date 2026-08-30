@@ -4,7 +4,9 @@
   "path": "kimi-pdf",
   "path_key": "kimi-pdf",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "办公文档"
+  ],
   "source": {
     "type": "local",
     "ref": null,

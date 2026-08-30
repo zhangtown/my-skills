@@ -4,7 +4,9 @@
   "path": "kimi-pptx-swarm",
   "path_key": "kimi-pptx-swarm",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "办公文档"
+  ],
   "source": {
     "type": "import",
     "ref": null,

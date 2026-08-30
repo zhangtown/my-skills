@@ -4,7 +4,9 @@
   "path": "speech-visual-html",
   "path_key": "speech-visual-html",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "音视频"
+  ],
   "source": {
     "type": "import",
     "ref": null,

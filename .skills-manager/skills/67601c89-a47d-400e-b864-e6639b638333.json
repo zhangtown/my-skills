@@ -4,7 +4,9 @@
   "path": "image-gen",
   "path_key": "image-gen",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "工具"
+  ],
   "source": {
     "type": "local",
     "ref": null,

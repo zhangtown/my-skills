@@ -4,7 +4,9 @@
   "path": "toubiao2",
   "path_key": "toubiao2",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "标书"
+  ],
   "source": {
     "type": "import",
     "ref": null,

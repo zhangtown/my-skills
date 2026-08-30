@@ -4,7 +4,9 @@
   "path": "bid-proposal",
   "path_key": "bid-proposal",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "标书"
+  ],
   "source": {
     "type": "import",
     "ref": null,

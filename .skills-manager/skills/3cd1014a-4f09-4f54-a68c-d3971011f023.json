@@ -4,7 +4,9 @@
   "path": "edge-tts",
   "path_key": "edge-tts",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "音视频"
+  ],
   "source": {
     "type": "import",
     "ref": null,

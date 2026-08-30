@@ -4,7 +4,9 @@
   "path": "theme-factory",
   "path_key": "theme-factory",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "设计前端"
+  ],
   "source": {
     "type": "import",
     "ref": null,

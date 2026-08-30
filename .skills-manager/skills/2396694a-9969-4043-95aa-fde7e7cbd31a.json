@@ -4,7 +4,9 @@
   "path": "zt-biaoshu-skill",
   "path_key": "zt-biaoshu-skill",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "标书"
+  ],
   "source": {
     "type": "import",
     "ref": null,

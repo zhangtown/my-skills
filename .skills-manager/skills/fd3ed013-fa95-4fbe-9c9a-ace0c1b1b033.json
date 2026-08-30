@@ -4,7 +4,9 @@
   "path": "kimi-slides",
   "path_key": "kimi-slides",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "办公文档"
+  ],
   "source": {
     "type": "import",
     "ref": null,

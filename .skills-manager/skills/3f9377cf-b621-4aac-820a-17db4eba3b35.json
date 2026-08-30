@@ -4,7 +4,9 @@
   "path": "chinese-gov-platform-application",
   "path_key": "chinese-gov-platform-application",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "办公文档"
+  ],
   "source": {
     "type": "import",
     "ref": null,

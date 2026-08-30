@@ -4,7 +4,9 @@
   "path": "kimi-excel",
   "path_key": "kimi-excel",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "办公文档"
+  ],
   "source": {
     "type": "import",
     "ref": null,

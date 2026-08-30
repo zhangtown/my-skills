@@ -4,7 +4,9 @@
   "path": "wechat-post-craft",
   "path_key": "wechat-post-craft",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "写作内容"
+  ],
   "source": {
     "type": "import",
     "ref": null,
