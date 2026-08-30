@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "de08e146-4336-4849-818a-3393b1898844",
+  "path": "toubiao2",
+  "path_key": "toubiao2",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

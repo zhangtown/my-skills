@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "2396694a-9969-4043-95aa-fde7e7cbd31a",
+  "path": "zt-biaoshu-skill",
+  "path_key": "zt-biaoshu-skill",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "import",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}
