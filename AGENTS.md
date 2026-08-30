@@ -8,9 +8,10 @@
 |---|---|---|
 | WorkBuddy | `~/.workbuddy/skills` | junction → 本目录 |
 | Claude | `~/.claude/skills` | junction → 本目录 |
-| ZCode / Pi | `~/.agents/skills`、`~/.agents/my-skills` | junction → 本目录 |
+| ZCode | `~/.agents/skills` | junction → 本目录 |
+| Pi | `~/.pi/agent/skills` | junction → 本目录 |
 
-替换前各目录的原始内容保留在同级的 `*.bak-20260830` 里。
+替换前各目录的原始内容保留在同级的 `*.bak-20260830` 里（Pi 的散装技能包移到 `~/.pi/agent/skill-packages/`）。
 
 ## 结构
 
