@@ -1,6 +1,16 @@
 # my-skills 共享技能库 Agent 指引
 
-本仓库是**所有 AI Agent 的统一技能主库**，本机路径 `~/.agents/skills/`。ZCode、Pi、WorkBuddy 等通过 Windows 目录联接（junction）共享它——**加/删/改技能只在这里做一份**，各端即时生效，不要往任何 Agent 自己的 skills 目录里单独塞副本。
+本仓库是**所有 AI Agent 的统一技能主库**，本机路径 `~/.skills-manager/skills/`（git 仓库 `zhangtown/my-skills`）。
+
+各端均通过 Windows 目录联接（junction）指向本目录，**加/删/改技能只在这里做一份**，各端即时生效，不要往任何 Agent 自己的 skills 目录里单独塞副本：
+
+| Agent | 目录 | 方式 |
+|---|---|---|
+| WorkBuddy | `~/.workbuddy/skills` | junction → 本目录 |
+| Claude | `~/.claude/skills` | junction → 本目录 |
+| ZCode / Pi | `~/.agents/skills`、`~/.agents/my-skills` | junction → 本目录 |
+
+替换前各目录的原始内容保留在同级的 `*.bak-20260830` 里。
 
 ## 结构
 
@@ -18,4 +28,4 @@
 
 - 装新技能：放进本库根目录 → `git add -A && git commit -m "feat: 添加 xx 技能" && git push`
 - 开工前先 `git pull`（多机同步）
-- Skills Manager（`~/.skills-manager/`）只是安装器/备份工具，它的中央库不是本库；从中安装后应把技能文件落到本库再提交
+- Skills Manager（`~/.skills-manager/`）是安装器/备份工具，它的中央 checkout 恰好就是本目录；从市场安装的新技能会自动落到这里，装完记得在本库 commit + push
