@@ -4,7 +4,9 @@
   "path": "design-taste-frontend",
   "path_key": "design-taste-frontend",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "设计前端"
+  ],
   "source": {
     "type": "skillssh",
     "ref": "leonxlnx/taste-skill/design-taste-frontend",
