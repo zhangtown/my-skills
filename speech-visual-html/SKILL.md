@@ -234,12 +234,12 @@ defaultTemplate: 模板-唐朝不存在风格-v5.7.html
 
 ```css
 .focus-group .focus-item{transition:all .6s ease;position:relative}
-.focus-group.dim-others .focus-item{opacity:.35;filter:brightness(.7) blur(1px)}
-.focus-group.dim-others .focus-item.zt-focus-active{opacity:1;filter:brightness(1) blur(0);transform:scale(1.12);z-index:3;box-shadow:0 0 50px rgba(196,30,36,.35)}
+.focus-group.dim-others .focus-item{opacity:.35;filter:brightness(.7) blur(0.0625rem)}
+.focus-group.dim-others .focus-item.zt-focus-active{opacity:1;filter:brightness(1) blur(0);transform:scale(1.12);z-index:3;box-shadow:0 0 3.125rem rgba(196,30,36,.35)}
 /* 文字卡片强调变体 */
 .focus-group.dim-others .focus-item-text.zt-focus-active{opacity:1;transform:scale(1.06);color:var(--red);font-weight:700}
 .zt-hl-sweep{position:relative}
-.zt-hl-sweep::after{content:"";position:absolute;left:0;bottom:-0.18em;height:0.12em;width:100%;background:linear-gradient(90deg,#C41E24,#B8860B);border-radius:2px;transform:scaleX(0);transform-origin:left center;transition:transform .6s cubic-bezier(.25,.46,.45,.94);pointer-events:none}
+.zt-hl-sweep::after{content:"";position:absolute;left:0;bottom:-0.18em;height:0.12em;width:100%;background:linear-gradient(90deg,#C41E24,#B8860B);border-radius:0.125rem;transform:scaleX(0);transform-origin:left center;transition:transform .6s cubic-bezier(.25,.46,.45,.94);pointer-events:none}
 .zt-hl-sweep.zt-hl-active::after{transform:scaleX(1)}
 ```
 
@@ -604,16 +604,16 @@ cur.querySelectorAll('[data-zt-role="subtitle"]').forEach(function(subEl){
       case 'zoom-in': return { from: { transform: 'scale(0.6)', opacity: 0 }, to: { transform: 'scale(1.3)', opacity: 1 } }
       case 'zoom-out': return { from: { transform: 'scale(1)', opacity: 1 }, to: { transform: 'scale(0.6)', opacity: 0 } }
       case 'fade-in': return { from: { opacity: 0 }, to: { opacity: 1 } }
-      case 'fly-left': return { from: { transform: 'translateX(-120px)', opacity: 0 }, to: { transform: 'translateX(0)', opacity: 1 } }
-      case 'fly-right': return { from: { transform: 'translateX(120px)', opacity: 0 }, to: { transform: 'translateX(0)', opacity: 1 } }
-      case 'fly-top': return { from: { transform: 'translateY(-120px)', opacity: 0 }, to: { transform: 'translateY(0)', opacity: 1 } }
-      case 'fly-bottom': return { from: { transform: 'translateY(120px)', opacity: 0 }, to: { transform: 'translateY(0)', opacity: 1 } }
+      case 'fly-left': return { from: { transform: 'translateX(-7.5rem)', opacity: 0 }, to: { transform: 'translateX(0)', opacity: 1 } }
+      case 'fly-right': return { from: { transform: 'translateX(7.5rem)', opacity: 0 }, to: { transform: 'translateX(0)', opacity: 1 } }
+      case 'fly-top': return { from: { transform: 'translateY(-7.5rem)', opacity: 0 }, to: { transform: 'translateY(0)', opacity: 1 } }
+      case 'fly-bottom': return { from: { transform: 'translateY(7.5rem)', opacity: 0 }, to: { transform: 'translateY(0)', opacity: 1 } }
       case 'bounce': return { from: { transform: 'scale(0.8)', opacity: 0 }, to: { transform: 'scale(1.15)', opacity: 1 } }
       case 'rotate': return { from: { transform: 'rotate(-15deg) scale(0.9)', opacity: 0 }, to: { transform: 'rotate(0deg) scale(1)', opacity: 1 } }
-      case 'wipe': return { from: { transform: 'translateX(-24px)', clipPath: 'inset(0 100% 0 0)', opacity: 1 }, to: { transform: 'translateX(0)', clipPath: 'inset(0 0% 0 0)', opacity: 1 } }
-      case 'flip': return { from: { transform: 'perspective(900px) rotateY(88deg) scale(0.94)', opacity: 0 }, to: { transform: 'perspective(900px) rotateY(0deg) scale(1)', opacity: 1 } }
-      case 'blur-in': return { from: { transform: 'scale(1.08)', filter: 'blur(14px)', opacity: 0 }, to: { transform: 'scale(1)', filter: 'blur(0px)', opacity: 1 } }
-      case 'slide-spin': return { from: { transform: 'translateX(-140px) rotate(-14deg) scale(0.85)', opacity: 0 }, to: { transform: 'translateX(0) rotate(0deg) scale(1)', opacity: 1 } }
+      case 'wipe': return { from: { transform: 'translateX(-1.5rem)', clipPath: 'inset(0 100% 0 0)', opacity: 1 }, to: { transform: 'translateX(0)', clipPath: 'inset(0 0% 0 0)', opacity: 1 } }
+      case 'flip': return { from: { transform: 'perspective(56.25rem) rotateY(88deg) scale(0.94)', opacity: 0 }, to: { transform: 'perspective(56.25rem) rotateY(0deg) scale(1)', opacity: 1 } }
+      case 'blur-in': return { from: { transform: 'scale(1.08)', filter: 'blur(0.875rem)', opacity: 0 }, to: { transform: 'scale(1)', filter: 'blur(0rem)', opacity: 1 } }
+      case 'slide-spin': return { from: { transform: 'translateX(-8.75rem) rotate(-14deg) scale(0.85)', opacity: 0 }, to: { transform: 'translateX(0) rotate(0deg) scale(1)', opacity: 1 } }
       default: return null
     }
   }
@@ -752,9 +752,9 @@ cur.querySelectorAll('[data-zt-role="subtitle"]').forEach(function(subEl){
 
 ```css
 .focus-group .focus-item{transition:all .6s ease;position:relative}
-.focus-group.dim-others .focus-item{opacity:.35;filter:brightness(.7) blur(1px)}
+.focus-group.dim-others .focus-item{opacity:.35;filter:brightness(.7) blur(0.0625rem)}
 .focus-group.dim-others .focus-item.zt-focus-active{opacity:1;filter:brightness(1) blur(0);
-  transform:scale(1.12);z-index:3;box-shadow:0 0 50px rgba(196,30,36,.35)}
+  transform:scale(1.12);z-index:3;box-shadow:0 0 3.125rem rgba(196,30,36,.35)}
 ```
 
 ```html
@@ -772,7 +772,7 @@ cur.querySelectorAll('[data-zt-role="subtitle"]').forEach(function(subEl){
 #### 圆形印章
 
 ```html
-<div style="width:64px;height:64px;border-radius:50%;background:#C23B22;
+<div style="width:4rem;height:4rem;border-radius:50%;background:#C23B22;
     display:flex;align-items:center;justify-content:center;
     transform:rotate(-12deg);">
     <span style="color:#fff;font-weight:700;font-size:0.85rem;">印章文字</span>
@@ -792,8 +792,8 @@ clip-path: polygon(0% 8%, 8% 0%, 92% 0%, 100% 8%, 100% 78%,
 
 ```html
 <div class="slide" style="background:#F5F0E8;">
-    <div style="background:#FAF6F0;border-radius:36px;padding:50px 60px;
-        display:flex;gap:30px;max-width:1300px;box-shadow:0 4px 20px rgba(0,0,0,0.04);">
+    <div style="background:#FAF6F0;border-radius:2.25rem;padding:3.125rem 3.75rem;
+        display:flex;gap:1.875rem;max-width:81.25rem;box-shadow:0 0.25rem 1.25rem rgba(0,0,0,0.04);">
         <!-- 左侧：文案信息区（竖排题签+标题+说明+场景标签+CTA按钮） -->
         <!-- 右侧：产品界面演示区（深色卡片+视频播放+状态指示器） -->
     </div>
@@ -924,7 +924,7 @@ python -m edge_tts --file {字幕文件} --voice zh-CN-YunxiNeural --write-media
 ### 更换图片为圆形印章
 
 ```html
-<div style="width:64px;height:64px;border-radius:50%;background:#C23B22;
+<div style="width:4rem;height:4rem;border-radius:50%;background:#C23B22;
     transform:rotate(-12deg);display:flex;align-items:center;justify-content:center;">
     <span style="color:#fff;font-size:0.85rem;">印章文字</span>
 </div>
@@ -976,11 +976,11 @@ v4.0 的 `mg-hide → mg-pop` 模式已废弃。现在统一用 **ztEdit 原生 
 
 ```css
 .focus-group .focus-item { transition: all .6s ease; position:relative; }
-.focus-group.dim-others .focus-item { opacity: .35; filter: brightness(.7) blur(1px); }
+.focus-group.dim-others .focus-item { opacity: .35; filter: brightness(.7) blur(0.0625rem); }
 .focus-group.dim-others .focus-item.zt-focus-active {
     opacity: 1; filter: brightness(1) blur(0);
     transform: scale(1.12); z-index: 3;
-    box-shadow: 0 0 50px rgba(196,30,36,.35);
+    box-shadow: 0 0 3.125rem rgba(196,30,36,.35);
 }
 ```
 
@@ -1000,7 +1000,7 @@ v4.0 的 `mg-hide → mg-pop` 模式已废弃。现在统一用 **ztEdit 原生 
 内容页**首选左右布局**（`.lr-row`），居中大字仅用于暗黑情绪页。
 
 ```css
-.lr-row { display:flex; gap:30px; align-items:center; width:100%; max-width:1300px; }
+.lr-row { display:flex; gap:1.875rem; align-items:center; width:100%; max-width:81.25rem; }
 .lr-left, .lr-right { flex:1; min-width:0; }
 ```
 
@@ -1019,8 +1019,8 @@ v4.0 的 `mg-hide → mg-pop` 模式已废弃。现在统一用 **ztEdit 原生 
 5. **⚠️ `.lr-right` 默认纵向**：CSS 中 `.lr-right` 默认为 `flex-direction:column`，需要横排图片时，要么用 `.img-row` 包裹，要么 inline 显式设置 `flex-direction:row`
 
 ```css
-.mat-img { max-width:100%; max-height:45vh; object-fit:contain; border-radius:12px; }
-.img-row { display:flex; gap:12px; justify-content:center; }
+.mat-img { max-width:100%; max-height:45vh; object-fit:contain; border-radius:0.75rem; }
+.img-row { display:flex; gap:0.75rem; justify-content:center; }
 .img-row img { max-height:40vh; object-fit:contain; }
 ```
 
@@ -1030,8 +1030,8 @@ v4.0 的 `mg-hide → mg-pop` 模式已废弃。现在统一用 **ztEdit 原生 
 用 `flex-wrap:wrap; justify-content:center` 让节点自动换行。
 
 ```css
-.tl-row { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
-.tl-node { min-width:100px; font-size:.78rem; }
+.tl-row { display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center; }
+.tl-node { min-width:6.25rem; font-size:.78rem; }
 ```
 
 ### 封面切页时机
