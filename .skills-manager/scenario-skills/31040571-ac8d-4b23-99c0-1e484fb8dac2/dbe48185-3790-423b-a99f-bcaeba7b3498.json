@@ -5,6 +5,7 @@
   "sort_order": 5,
   "tools": {
     "claude_code": false,
+    "codebuddy": true,
     "codex": false,
     "deepseek_harness": false,
     "kimi": false,

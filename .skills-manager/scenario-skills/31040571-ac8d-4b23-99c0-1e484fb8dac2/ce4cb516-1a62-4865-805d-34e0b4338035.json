@@ -5,6 +5,7 @@
   "sort_order": 1,
   "tools": {
     "claude_code": true,
+    "codebuddy": true,
     "pi": true,
     "workbuddy": true,
     "zcode": true
