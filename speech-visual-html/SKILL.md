@@ -14,14 +14,14 @@ triggers:
   - "国风"
   - "视频脚本"
   - "MG动画"
-version: 5.7
-defaultTemplate: 模板-唐朝不存在风格-v5.7.html
+version: 5.8
+defaultTemplate: 模板-唐朝不存在风格-v5.8.html
 ---
 
-# Speech Visual HTML Generator v5.7
+# Speech Visual HTML Generator v5.8
 
 > **默认风格**：基于"唐朝不存在"项目（2026.07.31 最终版），包含分批飞入封面、内容优先聚焦系统、左文右图布局。
-> 旧版风格（毒教材项目、mg-hide 模式）已归档，新项目优先使用 v5.7（ztEdit 原生格式，v5.4 起引入）。
+> 旧版风格（毒教材项目、mg-hide 模式）已归档，新项目优先使用 v5.8（ztEdit 原生格式，v5.4 起引入）。
 
 ## 技能概述
 
@@ -228,7 +228,7 @@ defaultTemplate: 模板-唐朝不存在风格-v5.7.html
 - `showSlide()` 翻页时清除 `animDone`/`focusDone` 标记 + 移除 `zt-focus-active`/`dim-others` 类
 - 保留 ← → 方向键/点击翻页/空格启动/自动播放
 
-> 完整播放脚本参见 `模板-唐朝不存在风格-v5.7.html` 的 `<script>` 块（已转为 ztEdit 原生格式，可直接复制结构）。
+> 完整播放脚本参见 `模板-唐朝不存在风格-v5.8.html` 的 `<script>` 块（已转为 ztEdit 原生格式，可直接复制结构）。
 
 ### 必须包含的 CSS（focus 联动）
 
@@ -537,7 +537,7 @@ cur.querySelectorAll('[data-zt-role="subtitle"]').forEach(function(subEl){
 
 #### 最小可复用播放脚本模板
 
-下面是一段可直接嵌入 HTML 的完整播放脚本（ztEdit 原生格式），行为与 `模板-唐朝不存在风格-v5.7.html` 一致。生成新页面时应以此为基础，避免自行简化导致切页/动画行为不一致。
+下面是一段可直接嵌入 HTML 的完整播放脚本（ztEdit 原生格式），行为与 `模板-唐朝不存在风格-v5.8.html` 一致。生成新页面时应以此为基础，避免自行简化导致切页/动画行为不一致。
 
 ```html
 <script>
@@ -1017,6 +1017,7 @@ v4.0 的 `mg-hide → mg-pop` 模式已废弃。现在统一用 **ztEdit 原生 
 3. **多图等高**：同一行多张图使用 `.img-row`（`display:flex; gap`），不设不同高度
 4. **幻灯片 padding 收紧**：`padding:40px` 而不是 `60px 70px`，给内容更多空间
 5. **⚠️ `.lr-right` 默认纵向**：CSS 中 `.lr-right` 默认为 `flex-direction:column`，需要横排图片时，要么用 `.img-row` 包裹，要么 inline 显式设置 `flex-direction:row`
+6. **尺寸一律 rem**：模板与生成页的 CSS、内联 style、播放脚本 kfMap 动画位移（translate/blur/perspective 等）全部用 rem（px÷16；根字号 calc(100vw/120)，@1080p=16px），禁止 px——固定 px 元素/位移在 4K 下不随视口放大，会显示过小
 
 ```css
 .mat-img { max-width:100%; max-height:45vh; object-fit:contain; border-radius:0.75rem; }
@@ -1130,6 +1131,7 @@ v4.0 的 `mg-hide → mg-pop` 模式已废弃。现在统一用 **ztEdit 原生 
   - 新增强调效果：`highlight-sweep` 划线强调（底部渐变划线扫出，类驱动持续态，不 dim 同组）
   - 关键帧模型扩展：from/to 支持 `clipPath`/`filter` 扩展属性，延迟/回位帧自动补 `none` 复位
   - 播放脚本模板 kfMap 与帧构建同步更新；编辑器下拉/预览/导出三端同发
+- v5.8: 固定 px 元素缩放修复——v5.6 改造漏网的内联 style 与播放脚本 kfMap 动画位移仍用 px（印章 60px/分隔线/徽章/gap/padding/translateX±120px/blur/perspective），4K 放大后显示过小或位移幅度不足；全部 px→rem（px÷16，根字号 calc(100vw/120)），并同步把 SKILL 文档代码块示例 px→rem 防再生；新增「尺寸一律 rem」规则；模板改名 v5.7→v5.8，数据契约 v5.5 不变
 - v5.7: 图片白边修复——img 类样式改保比写法（width:auto;max-width:100%;max-height:XXvh），至少一侧 auto 即保比，杜绝 width:min(100%,XXvw)+max-height 钉死扁框导致的 contain 左右/上下露底白边；模板改名 v5.6→v5.7，数据契约 v5.5 不变
 - v5.6: 模板自适应改造 + 图片随视口缩放（排版/布局改进，数据契约 v5.5 不变）
   - 根字号随视口缩放（html{font-size:calc(100vw/120)}），全部 px→rem：1080p/4K 内容占比恒定，4K 下更锐
