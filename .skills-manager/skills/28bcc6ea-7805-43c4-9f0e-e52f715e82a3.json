@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "28bcc6ea-7805-43c4-9f0e-e52f715e82a3",
+  "path": "fyne-gui-dev-cn",
+  "path_key": "fyne-gui-dev-cn",
+  "enabled": true,
+  "tags": [
+    "设计前端"
+  ],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}
