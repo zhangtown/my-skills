@@ -22,9 +22,23 @@ const http = require("http");
 try { require("dotenv").config(); } catch {}
 try { require("dotenv").config({ path: path.resolve(__dirname, ".env") }); } catch {}
 
-const BASE_URL = process.env.VISION_BASE_URL || process.env.DASHSCOPE_BASE_URL || "https://open.mwy.asia/v1";
-const API_KEY = process.env.VISION_API_KEY || process.env.DASHSCOPE_API_KEY || "sk-349492c5468686973c754603bf40d3f0ce2a87a3d761549f58245956c2a4c0ce";
-const MODEL = process.env.VISION_MODEL || "gpt-5.6";
+// 默认复用 pi 自己的模型配置（~/.pi/agent/models.json → providers.deepseek）：
+// 同一个 baseUrl/apiKey，优先挑一个声明了 image 输入的模型。这样不依赖第三方账户余额。
+function fromPiModels() {
+  try {
+    const prov = JSON.parse(
+      fs.readFileSync(path.join(require("os").homedir(), ".pi", "agent", "models.json"), "utf8")
+    )?.providers?.deepseek;
+    if (!prov?.baseUrl || !prov?.apiKey) return null;
+    const models = prov.models || [];
+    const vision = models.find((m) => (m.input || []).includes("image"));
+    return { baseUrl: prov.baseUrl, apiKey: prov.apiKey, model: vision?.id || models[0]?.id };
+  } catch { return null; }
+}
+const PI = fromPiModels();
+const BASE_URL = process.env.VISION_BASE_URL || process.env.DASHSCOPE_BASE_URL || PI?.baseUrl || "https://open.mwy.asia/v1";
+const API_KEY = process.env.VISION_API_KEY || process.env.DASHSCOPE_API_KEY || PI?.apiKey || "sk-349492c5468686973c754603bf40d3f0ce2a87a3d761549f58245956c2a4c0ce";
+const MODEL = process.env.VISION_MODEL || PI?.model || "gpt-5.6";
 
 function parseArgs() {
   const argv = process.argv.slice(2);
