@@ -13,16 +13,24 @@
 - 仓库只有两处滚动区：主面板 `cmd/gui/ui.go:258` 的 `container.NewVScroll(inner)`；
   连接明细 `cmd/gui/conns.go:69-71` 的三个 `*widget.List`（rawAll / rawDone / rawFail），
   外面套 `escList` 接管 ESC（`conns.go:405-414`）。没有横向滚动、没有其它 `widget.Scroll`。
-- 主题只覆盖了颜色：`ColorNameScrollBar → colBorder #D5D8DD`（`cmd/gui/theme.go:103`、定义 `:32`）。
+- 主题只覆盖了颜色：`ColorNameScrollBar → colBorder #D5D8DD`（`cmd/gui/theme.go:108-109`、定义 `:32`）。
   尺寸与轨道底色**都没覆盖**。
 - Fyne 默认（`vendor/fyne.io/fyne/v2/theme/size.go:259-262,283`）：
   `SizeNameScrollBar = 12`、`SizeNameScrollBarSmall = 3`、`SizeNameScrollBarRadius = 3`；
   浅色轨道 `#DBDBDB`（`theme/color.go:251-252`），滑块为黑 60%（`0x99`）。
-- 行为（`vendor/fyne.io/fyne/v2/internal/widget/scroller.go:207-253`）：
-  「大」容器（内容明显超出）用 12px 宽轨道 + 圆角 3 的滑块，背景轨道**只在 isLarge 时显示**；
-  小容器用 `Small*2 = 6`，轨道隐藏；**未滚动时滑块自动隐藏**（除非 `scrollBarAlwaysVisible`）。
-- 结论：滚动条就是「细条 + #D5D8DD」，没有 hover 反馈、没有自定义宽度。
-  想改外观只能覆盖上面三个 SizeName + `ColorNameScrollBarBackground`——但先问一遍用户，别顺手改。
+- 行为（`vendor/fyne.io/fyne/v2/internal/widget/scroller.go`；**这里很容易误读，实测过**）：
+  - 滑块宽度由 `isLarge()` 决定，而 `isLarge()` 定义是 `scroller.go:150-152`
+    `return a.isMouseIn || a.isDragging` —— **是鼠标是否在滚动区内／是否在拖，不是容器大小**。
+  - 所以：**静止是 3px 细条；鼠标进滚动区就变 12px；离开又变回 3px**。
+    （`scroller.go:245-252` barSizeAndOffset：isLarge 时 `width = SizeNameScrollBar(12)`，
+    否则 `widthOffset = SizeNameScrollBarSmall(3)`、`width = widthOffset`。）
+  - 不拖动时**滚动区预留**仍是 `Small*2 = 6px`（`scroller.go:209-210`），
+    但轨道背景 `r.background.Hidden = !r.area.isLarge()`（`scroller.go:224`）——
+    **只有鼠标在内时才画整条轨道底色**；未滚动且非悬停时滑块直接 `Hide()`（`scroller.go:226`），
+    除非 `scrollBarAlwaysVisible()`。
+- 结论：滚动条 = 「细条 + #D5D8DD」；**实际有 hover 反馈（变粗 + 出现轨道底）**，
+  仓库没有覆盖宽度/圆角。想改外观只能覆盖上述三个 SizeName + `ColorNameScrollBarBackground`
+  ——但先问一遍用户，别顺手改。
 
 ## 2. 文件选择器（不用 Fyne 自带，走 Win32 原生）
 
