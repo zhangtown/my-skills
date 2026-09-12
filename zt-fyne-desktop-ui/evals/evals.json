@@ -1,0 +1,23 @@
+{
+  "skill_name": "zt-fyne-desktop-ui",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "RemoteNet 客户端的『配置』卡片看着有点挤：输入框和按钮挨得太近，标签和输入框之间也只有一点点缝。帮我把这张卡片放松一点，风格别变。",
+      "expected_output": "一份改动方案：定位到 cmd/gui/ui.go 的间距旋钮（cardPadV/cardPadH、labelGap），说明改哪个值、为什么不动全局 theme.Padding()，并列出要跑的设计约束测试。不应引入新的颜色字面量或与令牌重复的魔法数字。",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "给 RemoteNet 客户端主面板加一张『运行日志』卡片，放在『配置』卡下面，显示最近 20 行日志（等宽字体）。",
+      "expected_output": "一份改动方案：复用 card()/cardSlot() 与既有色板令牌（colSurface/colBorder/colHairline/13 号等宽字号），说明它在 body VBox 中的间距来源、对窗口默认高度的影响（bodyMinHeight/fitBody 不许下缩），以及要补的测试。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "RemoteNet 客户端窗口在浅色桌面上看不出边界，帮我加个 1px 描边或者阴影让它浮起来。",
+      "expected_output": "方案应否掉自绘描边（会把界面整体压深一档，用户明确否过）与 CS_DROPSHADOW（实测只有右下 5px 硬边），给出 WS_THICKFRAME + WM_NCCALCSIZE=0 的 DWM 系统投影方案，指出改 vendored glfw 的 C 之后必须跑 tools/glfwmarker -write，并给出验收方式（GWL_STYLE、客户区==窗口、窗外像素采样）。",
+      "files": []
+    }
+  ]
+}
