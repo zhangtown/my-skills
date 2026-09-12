@@ -102,6 +102,8 @@
 - 圆角与内边距来自 PopUp 默认：`SizeNamePopupRadius` 默认 **5**、内边距 `SizeNameInnerPadding = 8`
   （`vendor/fyne.io/fyne/v2/widget/popup.go:113-115,179-182,212-214`）；底色 = `ColorNameOverlayBackground → colSurface`。
   → **气泡不是圆角胶囊，是 5px 圆角的白方块**；想更圆要覆盖 `SizeNamePopupRadius`（会影响所有弹层）。
+  → 但**可见**边距是 `NewPadded(theme.Padding()=5)` 与 PopUp 的 `InnerPadding(8)` 叠加后的结果，
+  这条**没做过像素实测**（盘点时只对代码推断）：要改气泡留白先量实际像素，别拿 5 或 8 直接当边距。
 - 定位：先 `pos + (14, 20)`（`:130`）；右边界 `画布宽 − 气泡宽 − 4`、下限 4；
   下方放不下就上翻 `y = pos.Y − 气泡高 − 8`、下限 4（`:132-143`）。
 - 出现时机：`time.AfterFunc(tipDelay)` + jitter 去抖（`:63-90`）→ **悬停 600ms 才出现**，快速划过不弹。
