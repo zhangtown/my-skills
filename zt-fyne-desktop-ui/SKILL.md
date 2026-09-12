@@ -23,6 +23,8 @@ description: 固化并改造 Fyne 桌面客户端（Windows 优先）的**整套
 | 状态层 | **六态**：正常 / 悬停 / 按压 / 焦点 / 禁用 / 选中；悬停叠色公式、焦点圈策略、禁用可读性、气泡、动画禁令 | `references/interaction-and-states.md` |
 | 令牌层 | 色板、字号阶、圆角、间距、菜单密度、加新样式的判断顺序 | `references/design-tokens.md` |
 | 验收层 | 构建、打包、换掉正在跑的 exe、像素级与窗口样式验证 | `references/build-and-verify.md` |
+| 度量层 | **确切数值与系统边界**：滚动条 / 文件选择器 / 对话框 / 菜单与托盘 / 气泡 / 光标 / 间距速查、圆角档位 | `references/control-metrics.md` |
+| 落地层 | 加新控件照走的 checklist（六态是否齐全、令牌是否复用、跑哪些测试）；可直接复制的代码片段（悬停叠色、禁用色、焦点透明、窗口投影） | `references/new-component-checklist.md`、`references/snippets.md` |
 
 本技能只覆盖"怎么把界面做对"。要写 Fyne 控件/布局的通用 API 用法，配 `fyne-gui-dev-cn` 一起用。
 
@@ -137,5 +139,5 @@ go build -ldflags "-H windowsgui" -o dist/<pkg>/gui.exe ./cmd/gui
 | 设计约束测试 | `cmd/gui/{cards,labels,menu,footbar,layout,tips,conns_cols}_test.go` |
 | 品牌图形（圆点/托盘/应用图标） | `internal/brand/branding.go` |
 
-本技能自带 5 个回归场景（`evals/evals.json`）与机械评分脚本，改进本技能时按
+本技能自带 7 个回归场景（`evals/evals.json`）与机械评分脚本，改进本技能时按
 `references/build-and-verify.md` 末尾的流程重跑。
