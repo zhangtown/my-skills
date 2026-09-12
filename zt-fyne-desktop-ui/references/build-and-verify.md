@@ -40,6 +40,11 @@ go run ./tools/glfwmarker -write   # 重新计算 C 树哈希并写回常量（-
 `build.bat` 在编 GUI 之前会自动跑一次。手工单编时**必须自己跑**，否则你会得到
 "代码改了、行为没变"的假象，并在运行时用 `GCL_STYLE` 之类的探测得出错误结论。
 
+> 本项目已经改过 **11 处第三方文件**（菜单字号与行距、按钮悬停叠色、Select/Check/Radio 各态、
+> 无边框建窗、glfw 的 `WS_THICKFRAME` 与 DWM 圆角/投影、C 树哈希……）。
+> 动样式之前先看 `references/component-inventory.md` §0.2 的总表——
+> 你看到的不一致往往已经被补丁修过，或者正是补丁的副作用。
+
 ### 2. `go build ... | head` 会把退出码吃掉
 
 任何把 build 输出接进管道的写法都会让 `$?` 变成 `head` 的退出码，于是**失败也会打 "BUILD-OK"**。

@@ -25,6 +25,7 @@ description: 固化并改造 Fyne 桌面客户端（Windows 优先）的**整套
 | 验收层 | 构建、打包、换掉正在跑的 exe、像素级与窗口样式验证 | `references/build-and-verify.md` |
 | 度量层 | **确切数值与系统边界**：滚动条 / 文件选择器 / 对话框 / 菜单与托盘 / 气泡 / 光标 / 间距速查、圆角档位 | `references/control-metrics.md` |
 | 落地层 | 加新控件照走的 checklist（六态是否齐全、令牌是否复用、跑哪些测试）；可直接复制的代码片段（悬停叠色、禁用色、焦点透明、窗口投影） | `references/new-component-checklist.md`、`references/snippets.md` |
+| 索引层 | **全仓逐组件盘点**：30 个组件族分别在哪个文件、各有哪些状态、11 处 vendor 补丁总表（快照，行号会漂移） | `references/component-inventory.md` |
 
 本技能只覆盖"怎么把界面做对"。要写 Fyne 控件/布局的通用 API 用法，配 `fyne-gui-dev-cn` 一起用。
 
