@@ -79,7 +79,7 @@ vendor 补丁 `fyne/widget/button.go:371-392` 新增 `widget.ButtonHoverDeepColo
 |---|---|---|---|
 | `footHint` 底栏提示 | 13 号 `canvas.Text`，前缀 `✓ `/`✗ `/`… `，色 `colOK`/`colDanger`/`colTextMid`；`MinSize().Width=0` | 长文省略号、**不撑宽窗口/底栏**；只在真实 Layout（宽>0）时截断，避免 0 宽 Refresh 吃掉整条；空消息清空；`Showing(kind,msg)` 比完整串 | `gui/ui.go:394-481`、`gui/footbar_test.go` |
 | `hoverTip` 气泡 | `widget.Label`（必须，`canvas.Text` 遇到 `\n` 出豆腐块）+ `container.NewPadded`；字号 12；宽 420 折行（按字符宽，中英混排不能按字节）；偏移 (14,20)，越界回收/翻转 | 600ms 延迟 + 6px 抖动容差；已显示则跟随鼠标；换文案换代 `gen` 丢弃旧 timer；挂**当前画布** overlay（借用别的窗口画布弹不出来）；窗口/对话框关闭必须 `close()` | `gui/tips.go:17-200`、`gui/conns.go:520-530` |
-| 状态圆点 `tipImage` | 24×24（PNG 源 64px）；三态圆点 + 悬停气泡 | 悬停／移动即弹（`dotTip()` 懒取）；空串不弹；光标现状是 `DefaultCursor`（注释写"手型"，**不一致**，见第 8 节） | `gui/tappabletext.go:86-141`、`gui/icon.go:44-52` |
+| 状态圆点 `tipImage` | 24×24（PNG 源 64px）；三态圆点 + 悬停气泡 | 悬停／移动即弹（`dotTip()` 懒取）；空串不弹；光标是 `DefaultCursor`（只弹气泡、点了没反应；手型会让人误以为能点） | `gui/tappabletext.go:86-141`、`gui/icon.go:44-52` |
 | 对话框 | `ShowError` / `ShowInformation` / `ShowConfirm`；生成证书用 `dialog.NewForm` 并显式 `Resize(560,280)` | 破坏性操作必须二次确认（覆盖生成、删配置/证书）；**模态必被母窗尺寸夹住** → 宽表用独立窗口 | `gui/app.go:671-699`、`gui/ui.go:981-1006` |
 | 原生文件对话框 | `internal/winfile`（`GetOpenFileNameW`/`GetSaveFileNameW`），过滤器「证书/PEM」+「所有文件」 | **不用 Fyne 自绘文件选择器**；取消是正常路径（`ErrCanceled` 静默返回）；过滤器拼双 NUL | `internal/winfile/openfile_windows.go`、`gui/ui.go:891-935` |
 | 托盘菜单 + 图标 + 通知 | 菜单项与主界面同一套（13 号等宽、高亮 `#DEE2E8`、禁用 #6B7280）；图标＝深色 mini 方块 + 状态色 Z 徽标 | 文案＝主界面按钮的镜像（连接↔断开连接）；互斥功能用 `Disabled` 而不是隐藏；托盘图标与界面圆点同状态色系、同刻切换 | `gui/tray.go:20-112`、`gui/icon.go:49-52` |
@@ -108,7 +108,6 @@ vendor 补丁 `fyne/widget/button.go:371-392` 新增 `widget.ButtonHoverDeepColo
 | 令牌缺口（12 处颜色字面量） | `#DEE2E8`(Focus)、`#E4E7EB`(Hover)、`#D8DCE1`(Pressed)、`#6B7280`(Disabled)、`#F7F8FA`(DisabledButton)、`#1F2328` 7%(Shadow)、`#FFFFFF`(OnPrimary)、hero 三段文字色、卡片底 `#FFFFFF`、渐变 `#2C313A→#14161B` | 提令牌是纯重构，需用户点头；`ui.go:59-61` 的 `#14161B` 与 `theme.heroBottom #15171C` 差一档 |
 | 已定义但零引用 | `colAccentBg`(#A4243B 8%)、`heroTop`、`heroBottom`、`heroAccent`(#E04B5E) | 要么删，要么接回 hero/选中底——**问用户** |
 | 状态色两套 | 主题 `colOK #2E8B57` / `colDanger #D5382E` vs 图标 `#2FB35D` / `#E5483E` | 建议明文豁免"小尺寸 PNG 图标更艳"，而不是硬统一 |
-| 圆点光标 | 注释写"悬停手型"，代码返回 `DefaultCursor`；`tappableText` 可点但没覆写 `Cursor()` | 若统一成手型，属于交互改进，需用户确认 |
 | 顶栏双击最大化 | 未实现 | 用户提过窗口行为，但未要求此功能 |
 | 滚动条尺寸 | 未覆写 `SizeNameScrollBar`，是唯一"Fyne 默认尺寸"控件 | 统一视觉需先补令牌 |
 | 菜单项按压态 / 列表行选中态 | 无 | 现状可接受；引入会改变已冻结的观感 |

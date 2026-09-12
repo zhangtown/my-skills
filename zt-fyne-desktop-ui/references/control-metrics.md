@@ -105,9 +105,13 @@
 - `desktop.PointerCursor`（手型）调用点：`cmd/gui/titlebar_windows.go:272` —— 顶栏「文件 / 帮助 / ─ / ✕」。
 - 缩放热区：`titlebar_windows.go:382-391` 的 `resizeGrip.Cursor()` 返回 `g.cur`；
   实例分别是 `:456` `HResizeCursor`（右）、`:457` `VResizeCursor`（下）、`:458` `NWSEResizeCursor`（右下角）。
-- `cmd/gui/tappabletext.go:139-142`：`tipImage.Cursor()` 返回 **`desktop.DefaultCursor`**——
-  注释写着"悬停手型"但代码返回箭头，属于**已知不一致**；要统一就改这里（改前确认用户是否要手型）。
-- `tappableText`（可点击的流量行）**没有实现 `Cursor()`** → 箭头，与"可点击"语义不符。
+- `cmd/gui/tappabletext.go` 里两个自定义组件都显式给了光标（并带 `desktop.Cursorable` 编译期断言）：
+  - `tappableText.Cursor() = PointerCursor`（**可点**：顶部流量行 `cmd/gui/ui.go:70`、连接明细三列
+    `cmd/gui/conns.go:156-158` + `:216` 挂 `OnTapped`）——手型是这里“能点”的唯一暗示。
+    commit `cea4dca` 补上；之前它没覆写 `Cursor()`，是箭头。
+  - `tipImage.Cursor() = DefaultCursor`（**不可点**：状态圆点只悬停出气泡、点了没反应）。
+    曾经注释写“悬停手型”而代码返回箭头，现已按实际行为改注释——别把圆点改成手型，那是误导。
+  - 这两条约定由 `cmd/gui/tips_test.go` 的 `TestHoverCursors` 锁住。
 - 其它控件（按钮、输入框、勾选、菜单项）仓库未显式设置，交给 Fyne 与控件默认。
 
 ## 7. 间距与几何速查

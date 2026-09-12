@@ -52,9 +52,10 @@
 
 | 元素 | cursor | 位置 |
 |---|---|---|
-| 顶栏按钮、可点文字 | `desktop.PointerCursor` | `cmd/gui/titlebar_windows.go:272`（`barButton.Cursor()`） |
+| 顶栏按钮 | `desktop.PointerCursor` | `cmd/gui/titlebar_windows.go:272`（`barButton.Cursor()`） |
+| 可点文字（顶部流量行、连接明细三列） | `desktop.PointerCursor` | `cmd/gui/tappabletext.go`（`tappableText.Cursor()`）；约定锁在 `cmd/gui/tips_test.go` 的 `TestHoverCursors` |
 | 窗口边缘/角落缩放热区 | `desktop.HResizeCursor` 等 | `cmd/gui/titlebar_windows.go:382-456`（`newResizeGrip(edge, min, cur)`） |
-| 图片 / 装饰元素 | `desktop.DefaultCursor` | `cmd/gui/tappabletext.go:140` |
+| 纯装饰（状态圆点 `tipImage`） | `desktop.DefaultCursor` | `cmd/gui/tappabletext.go`（只弹气泡、点了没反应） |
 
 新加可点元素**顺手给出 cursor**；不给就还是默认箭头，用户不知道它能点。
 
