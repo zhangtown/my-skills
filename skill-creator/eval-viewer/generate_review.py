@@ -61,7 +61,7 @@ def find_runs(workspace: Path) -> list[dict]:
     """Recursively find directories that contain an outputs/ subdirectory."""
     runs: list[dict] = []
     _find_runs_recursive(workspace, workspace, runs)
-    runs.sort(key=lambda r: (r.get("eval_id", float("inf")), r["id"]))
+    runs.sort(key=lambda r: (r.get("eval_id") if r.get("eval_id") is not None else float("inf"), r["id"]))
     return runs
 
 
@@ -98,6 +98,13 @@ def build_run(root: Path, run_dir: Path) -> dict | None:
                 pass
             if prompt:
                 break
+
+    # 兜底：从路径里解析 eval id——老 iteration 可能没写 eval_metadata.json，
+    # 那时 eval_id=None，find_runs 的排序会因为 None 与 int 不能比较而崩。
+    if eval_id is None:
+        match = re.search(r"eval-(\d+)", str(run_dir))
+        if match:
+            eval_id = int(match.group(1))
 
     # Fall back to transcript.md
     if not prompt:
