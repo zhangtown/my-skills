@@ -3,45 +3,67 @@
   "evals": [
     {
       "id": 0,
+      "name": "config-card-spacing",
       "prompt": "RemoteNet 客户端的『配置』卡片看着有点挤：输入框和按钮挨得太近，标签和输入框之间也只有一点点缝。帮我把这张卡片放松一点，风格别变。",
-      "expected_output": "一份改动方案：定位到 cmd/gui/ui.go 的间距旋钮（cardPadV/cardPadH、labelGap），说明改哪个值、为什么不动全局 theme.Padding()，并列出要跑的设计约束测试。不应引入新的颜色字面量或与令牌重复的魔法数字。",
-      "files": []
+      "expected_output": "方案改 cmd/gui/ui.go 的 cardPadV/cardPadH 与 labelGap（不动 theme.Padding 全局行距、不在 VBox 插占位对象），并列出 go test ./cmd/gui 的设计约束测试。",
+      "expectations": {
+        "with": "6/6",
+        "without": "6/6"
+      }
     },
     {
       "id": 1,
+      "name": "new-log-card",
       "prompt": "给 RemoteNet 客户端主面板加一张『运行日志』卡片，放在『配置』卡下面，显示最近 20 行日志（等宽字体）。",
-      "expected_output": "一份改动方案：复用 card()/cardSlot() 与既有色板令牌（colSurface/colBorder/colHairline/13 号等宽字号），说明它在 body VBox 中的间距来源、对窗口默认高度的影响（bodyMinHeight/fitBody 不许下缩），以及要补的测试。",
-      "files": []
+      "expected_output": "复用 card()/cardSlot()、既有色板令牌、theme.Padding 行距规则，并说明 bodyMinHeight/fitBody 只加高不缩宽，同时补测试。",
+      "expectations": {
+        "with": "6/6",
+        "without": "6/6"
+      }
     },
     {
       "id": 2,
+      "name": "window-shadow",
       "prompt": "RemoteNet 客户端窗口在浅色桌面上看不出边界，帮我加个 1px 描边或者阴影让它浮起来。",
-      "expected_output": "方案应否掉自绘描边（会把界面整体压深一档，用户明确否过）与 CS_DROPSHADOW（实测只有右下 5px 硬边），给出 WS_THICKFRAME + WM_NCCALCSIZE=0 的 DWM 系统投影方案，指出改 vendored glfw 的 C 之后必须跑 tools/glfwmarker -write，并给出验收方式（GWL_STYLE、客户区==窗口、窗外像素采样）。",
-      "files": []
+      "expected_output": "否掉自绘描边与 CS_DROPSHADOW，给 WS_THICKFRAME + WM_NCCALCSIZE(0) 方案，并强调改 glfw C 后要跑 tools/glfwmarker -write。",
+      "expectations": {
+        "with": "6/6",
+        "without": "6/6"
+      }
     },
     {
       "id": 3,
+      "name": "rebuild-and-verify",
       "prompt": "RemoteNet 的 gui.exe 是旧的了，你重新编译一份换上，换完确认一下新 exe 真的在跑。",
-      "expected_output": "方案应包含：PATH 前置 go-sdk 与 ucrt64/bin、产物写 gui.new.exe 再由 swap_gui.ps1 换名重启（不覆盖正在跑的 exe）、-H windowsgui、改过 glfw 的 C 先跑 tools/glfwmarker -write、用 wininfo.ps1/GWL_STYLE 验收、以及硬杀后系统代理残留的提醒。",
-      "files": []
+      "expected_output": "PATH 前置 go-sdk + ucrt64、产物 gui.new.exe、swap_gui.ps1 换名重启、wininfo 验收、提醒系统代理残留。",
+      "expectations": {
+        "with": "7/7",
+        "without": "5/7"
+      }
     },
     {
       "id": 4,
+      "name": "new-interactive-block",
       "prompt": "给 RemoteNet 客户端加一个『批量导入证书』按钮：点开文件选择器可以多选 .pem，选完在下面列出文件名。界面风格要跟现在一致。",
-      "expected_output": "方案应沿用既有按钮/卡片样式而非新造一套，间距遵守 theme.Padding() 行距规则（不在 VBox 插占位对象），窗口只加高（bodyMinHeight/fitBody），列表可滚动，颜色只用既有令牌，并同步更新 cmd/gui 的设计约束测试。",
-      "files": []
+      "expected_output": "沿用既有按钮/卡片样式与 theme.Padding 行距规则、窗口只加高、列表可滚动、补测试、不新造颜色。",
+      "expectations": {
+        "with": "6/6",
+        "without": "5/6"
+      }
     },
     {
       "id": 5,
+      "name": "hover-color-fix",
       "prompt": "客户端那个红色的『连接』按钮，鼠标移上去以后看着像变灰了、像按钮失效了一样。帮我修一下，顺便说明为什么会出现这个效果。",
-      "expected_output": "根因是"悬停用了不透明浅灰覆盖底色"（等价整块替换，暗底/红底上的 CTA 会被抹灰）；修法是改成半透明叠色（黑 14%，ButtonHoverDeepColorName，vendored button.go），这样白卡与深色面板都对；并说明按压要比悬停深一档、禁用要比可用态更淡但文字仍可读，最后补测试。",
-      "files": []
+      "expected_output": "根因是不透明浅灰整块覆盖底色（ButtonHoverDeepColorName）；修法用半透明黑 14% 叠色（白卡与深色面板都成立），并顺带对齐按压/禁用/焦点。",
+      "expectations": {}
     },
     {
       "id": 6,
+      "name": "unify-component-style",
       "prompt": "我们客户端的按钮、输入框、下拉框、勾选框，看久了总觉得风格不统一；你把这套界面里所有组件的样式和鼠标交互都理一遍，固化下来，以后加新控件照着它做。",
-      "expected_output": "产出一份组件规范化方案：六态（正常/悬停/按压/焦点/禁用/选中）框架、跨控件统一的数据字阶（13 号等宽）、统一圆角、焦点圈策略（勾选/单选刻意透明）、悬停叠色公式、各组件的形状与光标归属，并把这些写进一处可复用的文档/令牌而不是散在代码里。",
-      "files": []
+      "expected_output": "按六态框架与五族结构模板给全控件规范：13 号等宽字阶、圆角 8/10、焦点圈透明是刻意、悬停叠色公式、光标归属，并固化到 theme.go 令牌 + references 文档 + 约束测试。",
+      "expectations": {}
     }
   ]
 }
