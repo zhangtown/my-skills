@@ -100,3 +100,20 @@ CS_DROPSHADOW 只有右下 5px 硬边，左边上边完全没有投影；
 
 运行配置 `remotenet-gui.json`、证书、本地随手编出来的 `gui.exe` 都不要提交
 （`.gitignore` 已排除 `/gui.exe`；正式产物在 `dist/`）。
+
+## 改进本技能时怎么回归（评测）
+
+本技能自带 5 个回归场景与机械评分脚本，工作区在
+`C:\Users\ELEX-ZT\.skills-manager\zt-fyne-desktop-ui-workspace\`：
+
+- 场景与断言的出处：技能内 `evals/evals.json`；每次对照运行落在
+  `iteration-N/eval-*/(with_skill|without_skill)/outputs/`（同场景、同模型、只差技能）。
+- 跑一次：派 `worker` 子代理执行场景 prompt（只读仓库、只产出方案文档，**不改仓库、不跑构建**），
+  两个配置各一个 run；写完用 `python grade.py <iteration-dir>` 机械评分（正则断言），
+  再 `python <skill-creator>/eval-viewer/generate_review.py <iteration-dir> --skill-name ... --port 3117`
+  看逐条对比（含 `benchmark.json`）。
+- **断言必须有区分度**：两侧都满分说明断言在考"仓库里摆着的注释"，不是在考技能；
+  把断言换成需要跨文件推理 + 无技能时容易漏的点（例如"改 vendored C 后要跑 `glfwmarker -write`"、
+  "卡片行距来自 `theme.Padding()`"）。
+- **断言必须可客观判断**：能用正则/计数/单位验证（提到某个常量、给出某个数值、是否引入字面量），
+  不要写"写得好不好"这种判断。

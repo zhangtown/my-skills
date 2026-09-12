@@ -18,6 +18,30 @@
       "prompt": "RemoteNet 客户端窗口在浅色桌面上看不出边界，帮我加个 1px 描边或者阴影让它浮起来。",
       "expected_output": "方案应否掉自绘描边（会把界面整体压深一档，用户明确否过）与 CS_DROPSHADOW（实测只有右下 5px 硬边），给出 WS_THICKFRAME + WM_NCCALCSIZE=0 的 DWM 系统投影方案，指出改 vendored glfw 的 C 之后必须跑 tools/glfwmarker -write，并给出验收方式（GWL_STYLE、客户区==窗口、窗外像素采样）。",
       "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "RemoteNet 的 gui.exe 是旧的了，你重新编译一份换上，换完确认一下新 exe 真的在跑。",
+      "expected_output": "方案应包含：PATH 前置 go-sdk 与 ucrt64/bin、产物写 gui.new.exe 再由 swap_gui.ps1 换名重启（不覆盖正在跑的 exe）、-H windowsgui、改过 glfw 的 C 先跑 tools/glfwmarker -write、用 wininfo.ps1/GWL_STYLE 验收、以及硬杀后系统代理残留的提醒。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "给 RemoteNet 客户端加一个『批量导入证书』按钮：点开文件选择器可以多选 .pem，选完在下面列出文件名。界面风格要跟现在一致。",
+      "expected_output": "方案应沿用既有按钮/卡片样式而非新造一套，间距遵守 theme.Padding() 行距规则（不在 VBox 插占位对象），窗口只加高（bodyMinHeight/fitBody），列表可滚动，颜色只用既有令牌，并同步更新 cmd/gui 的设计约束测试。",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "客户端那个红色的『连接』按钮，鼠标移上去以后看着像变灰了、像按钮失效了一样。帮我修一下，顺便说明为什么会出现这个效果。",
+      "expected_output": "根因是"悬停用了不透明浅灰覆盖底色"（等价整块替换，暗底/红底上的 CTA 会被抹灰）；修法是改成半透明叠色（黑 14%，ButtonHoverDeepColorName，vendored button.go），这样白卡与深色面板都对；并说明按压要比悬停深一档、禁用要比可用态更淡但文字仍可读，最后补测试。",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "我们客户端的按钮、输入框、下拉框、勾选框，看久了总觉得风格不统一；你把这套界面里所有组件的样式和鼠标交互都理一遍，固化下来，以后加新控件照着它做。",
+      "expected_output": "产出一份组件规范化方案：六态（正常/悬停/按压/焦点/禁用/选中）框架、跨控件统一的数据字阶（13 号等宽）、统一圆角、焦点圈策略（勾选/单选刻意透明）、悬停叠色公式、各组件的形状与光标归属，并把这些写进一处可复用的文档/令牌而不是散在代码里。",
+      "files": []
     }
   ]
 }
