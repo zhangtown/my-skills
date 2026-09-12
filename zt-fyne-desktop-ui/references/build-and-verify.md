@@ -103,17 +103,23 @@ CS_DROPSHADOW 只有右下 5px 硬边，左边上边完全没有投影；
 
 ## 改进本技能时怎么回归（评测）
 
-本技能自带 5 个回归场景与机械评分脚本，工作区在
-`C:\Users\ELEX-ZT\.skills-manager\zt-fyne-desktop-ui-workspace\`：
+本技能自带 7 个回归场景；工作区（不进仓库）：
+`C:\Users\ELEX-ZT\.skills-manager\zt-fyne-desktop-ui-workspace\`
 
-- 场景与断言的出处：技能内 `evals/evals.json`；每次对照运行落在
-  `iteration-N/eval-*/(with_skill|without_skill)/outputs/`（同场景、同模型、只差技能）。
-- 跑一次：派 `worker` 子代理执行场景 prompt（只读仓库、只产出方案文档，**不改仓库、不跑构建**），
-  两个配置各一个 run；写完用 `python grade.py <iteration-dir>` 机械评分（正则断言），
-  再 `python <skill-creator>/eval-viewer/generate_review.py <iteration-dir> --skill-name ... --port 3117`
-  看逐条对比（含 `benchmark.json`）。
+- 场景定义：技能内 `evals/evals.json`（`id` / `name` / `prompt` / `expected_output`）。
+- 评分断言：`<工作区>\iteration-N\checks.json`（按 eval id 分组，每条一个正则）。
+- 跑一次：给每个 `iteration-N/eval-*/(with_skill|without_skill)` 派一个 `worker` 子代理，
+  两部分给**同一段用户原话**，只差“给不给技能目录”；提示里写明“只读仓库、只把方案写到该 run 的
+  `outputs/plan.md`、不改仓库不跑构建”。
+- 打分：`python <工作区>\bench.py iteration-N` → 每个 run 出 `grading.json`，
+  目录级出 `benchmark.json` / `benchmark.md`。
+- 看对照页（本地网页，含逐条证据）：
+  `python C:\Users\ELEX-ZT\.skills-manager\skills\skill-creator\eval-viewer\generate_review.py <工作区根> --benchmark iteration-N/benchmark.json --skill-name zt-fyne-desktop-ui --port 3117`
 - **断言必须有区分度**：两侧都满分说明断言在考"仓库里摆着的注释"，不是在考技能；
   把断言换成需要跨文件推理 + 无技能时容易漏的点（例如"改 vendored C 后要跑 `glfwmarker -write`"、
   "卡片行距来自 `theme.Padding()`"）。
 - **断言必须可客观判断**：能用正则/计数/单位验证（提到某个常量、给出某个数值、是否引入字面量），
-  不要写"写得好不好"这种判断。
+  不要写“写得好不好”这种判断。
+- **n 很小，别吹**：一个场景一侧只跑 1 个 run，报告里只写“共同场景上的差值”（如 +13.3pt，
+  基于 2 个场景 15 条断言），不要写成“技能普遍提升 X%”。
+- 两侧分数一样时先查断言：多半是断言在考仓库里现成的注释，不是在考技能。
