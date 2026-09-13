@@ -1124,7 +1124,102 @@ v4.0 的 `mg-hide → mg-pop` 模式已废弃。现在统一用 **ztEdit 原生 
    - 渲染副本要把相对素材路径转 file:// 绝对路径（JS 动态拼接的路径也要替换）
 
 
+## 实战经验（v5.9 新增：内容占比与左右布局，必查项）
+
+> 这两条是用户明确反馈过的返工点：**"内容占整体画面比例太小、看起来不充实，小屏上观众看不清"**、
+> **"图片和文字相距很远、不集中在中间"**。生成后必须用视觉检查，不能只看结构校验。
+
+### 坑 1：模板默认尺寸在 1080p 下偏小
+
+模板 `html{font-size:calc(100vw/120)}` + `.slide-content{max-width:78vw}` 的实测后果：
+1rem = 16px，正文 `1.15rem` ≈ **18px**，卡片文字更小。竖屏手机上基本读不了。
+
+**修法（生成页面时直接内联到 `<style>`）：**
+
+```css
+html{font-size:calc(100vw/96)}      /* 模板 120 -> 96，全站 rem 尺寸放大约 1.25 倍 */
+.slide{padding-bottom:7rem}          /* 底部给字幕安全区 */
+.slide-content{max-width:90vw}       /* 模板 78vw */
+```
+- 字号放大后要同步**放大图片与卡片**（见坑 3），否则文字变大、图还是小的，比例更怪
+- 底部固定字幕 `2.8rem` 会同步变大到约 54~58px，正好是短视频字幕的合适大小
+
+### 坑 2：`.lr-left`/`.lr-right` 用 flex:1 会让图文分离、文字压到图上
+
+模板里 `.lr-left,.lr-right{flex:1}`。当右列是**竖版窄图**时，图片只占列宽的一小部分并被居中，
+于是在图文之间留下一大块空白，整组也不居中——就是用户说的"相距很远、不集中"。
+
+更糟的是若给左列加 `min-width:0`（想让它收缩），Flex 会把文本框压到比内容还窄，
+**文字直接溢出、压在图片上**（实测出现"先扣帽子"几个字叠在漫画上）。
+
+**修法：改用 grid 双列**（轨道不会重叠，且能按内容宽度居中）：
+
+```css
+.lr-row{display:grid;grid-template-columns:auto auto;gap:2.5rem;align-items:center;
+        justify-content:center;width:fit-content;max-width:94vw;margin:0 auto}
+.lr-left{max-width:44vw;min-width:0;display:flex;flex-direction:column;gap:.75rem;justify-content:center}
+.lr-right{display:flex;align-items:center;justify-content:center;gap:.75rem;min-width:0}
+```
+
+同时**给图片显式写 `height`/`width`，不要再依赖 `max-width:100%`**：
+`img{max-width:100%}` 在 flex/grid 自动轨道里会形成循环约束，浏览器解析出来的宽度远小于预期
+（实测一张 1.68:1 的横图只渲染出约 14% 屏宽）。写成：
+
+```html
+<img src="素材5.jpg" style="width:64vw;height:auto;max-width:none">   <!-- 横图给宽 -->
+<img src="素材17a.jpg" style="height:60vh;width:auto;max-width:none"> <!-- 竖图给高 -->
+```
+
+### 坑 3：竖版长截图在 16:9 画布里最多只占约 30% 宽
+
+竖图受高度限制：`height:78vh` 时宽 = 78vh × 宽高比。宽高比 0.65 的截图 → 只有 **29vw**，
+再配一列文字也只占屏宽一半，画面大面积空着。
+
+**修法：把竖版长截图对半切成两张横版，并排展示**（内容不丢，横向占比翻倍到 85~95%）：
+
+```python
+from PIL import Image
+im = Image.open('素材17.jpg').convert('RGB'); w, h = im.size; mid = h // 2
+im.crop((0, 0, w, mid)).save('素材17a.jpg', quality=90)
+im.crop((0, mid, w, h)).save('素材17b.jpg', quality=90)
+```
+```html
+<div class="focus-group" style="display:flex;gap:0.75rem">
+  <img src="素材17a.jpg" style="height:46vh;width:auto;max-width:none">
+  <img src="素材17b.jpg" style="height:46vh;width:auto;max-width:none">
+</div>
+```
+（阅读顺序是左=上半、右=下半，对文字截图是自然的；纯图片/照片类素材不要这样切。）
+
+### 怎么用视觉检查内容占比（必做）
+
+单看结构校验发现不了这个问题，必须**截图 + 量内容包围盒**：
+
+```python
+from PIL import Image, ImageChops
+for i in range(19):
+    im = Image.open('preview/shot_%02d.png' % i).convert('RGB')
+    im = im.crop((0, 120, 1920, 920))          # 裁掉顶栏与底部字幕，只量滑页内容
+    bg = Image.new('RGB', im.size, im.getpixel((3, 3)))
+    d  = ImageChops.difference(im, bg).convert('L').point(lambda v: 255 if v > 18 else 0)
+    bb = d.getbbox()
+    print('s%02d 宽 %.1f%%  高 %.1f%%' % (i, (bb[2]-bb[0])/1920*100, (bb[3]-bb[1])/800*100))
+```
+
+**判定线：横向占比 ≥70% 算合格**，横排多图/卡片页应到 85%+；低于 50% 必须返工。
+本工程整改前平均 61%、最低 32%，整改后平均 75%、长截图页 86~96%。
+
+补充两条目视判据：
+- **1:1 截图看有没有文字压图**（flex 收缩导致的溢出，结构校验查不出来）
+- **再按 390×844（手机）渲染一遍**：正文字号 <24px 的页面在小屏上直接判不合格
+
 ## 版本历史
+
+- v5.9: 内容占比与左右布局修复（本工程返工点）
+  - 新增「实战经验（v5.9）」：模板默认尺寸偏小（1rem=16px、正文 18px）→ 根字号 120→96；
+    `.lr-left/.lr-right` flex:1 导致图文分离甚至文字压图 → 改 grid 双列 + 图片显式尺寸；
+    竖版长截图在 16:9 里只占约 30% 宽 → 对半切成横版并排；
+    附「量内容包围盒」的视觉检查方法与 ≥70% 判定线
 
 - v5.5: 动画扩充 CSS 档（契约同步升级 v5.3→v5.4，与 ztEdit 编辑器同发）
   - 新增入场效果：`wipe` 擦除滑入（clip-path）、`flip` 3D翻转、`blur-in` 虚化聚焦（filter）、`slide-spin` 旋转滑入
