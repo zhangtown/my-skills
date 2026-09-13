@@ -10,7 +10,7 @@
     "deepseek_harness": true,
     "kimi": true,
     "pi": true,
-    "workbuddy": false,
+    "workbuddy": true,
     "zcode": true
   }
 }
