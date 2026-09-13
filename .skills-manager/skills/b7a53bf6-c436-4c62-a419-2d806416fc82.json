@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "b7a53bf6-c436-4c62-a419-2d806416fc82",
+  "path": "xiaota-voiceover",
+  "path_key": "xiaota-voiceover",
+  "enabled": true,
+  "tags": [
+    "写作内容"
+  ],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}
