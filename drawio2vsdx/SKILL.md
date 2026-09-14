@@ -1,7 +1,7 @@
 ---
 name: drawio2vsdx
 description: Convert draw.io diagrams (.drawio) into Visio .vsdx or Visio-friendly SVG by driving the draw.io desktop CLI plus Visio COM automation, and insert the result into a Word/WPS 文字 document (.docx) as an editable Visio object. Use when the user wants to convert or hand a diagram to Microsoft Visio (drawio 转 visio, drawio 转 vsdx, 导出成 Visio 格式, Visio 打开 drawio 文件), when a diagram must be placed into a Word 文档 / WPS 文字文档 (在 word 里插入 visio 流程图, 把流程图插进文档, 文档插图, 报告里加流程图, 一键插入), when Visio shows garbled or displaced labels after such a conversion (中文乱码, 文字跑到左上角, 文字丢失, 文本框变空白), or when several diagrams must be converted in one go (批量转换 drawio, 批量导出 vsdx, 多页 drawio 导出). Do NOT use it to author new diagrams — that is the `drawio` skill — and it does not do the reverse direction (vsdx → drawio).
-version: 1.3.0
+version: 1.4.0
 ---
 
 # drawio → Visio (.vsdx) 转换
@@ -155,6 +155,64 @@ python "$S" word 图.vsdx   -d 报告.docx --mode picture        # 只放矢量�
 **别再用** `shape.CellsSRC(3,0,0).FormulaU="X pt"` / `shape.Characters.CharProps(0, fs)` /
 `AddRow` 去 Visio 里改字号 —— 在 SVG 导入的**嵌套组**上这些都写不进去（导出的 XML 里根本
 不出现 `Char.Size`）。根因是缺陷 B 的嵌套缩放，正确解法是扁平化，不是换 API。
+
+### ⚠️⚠️ 自写 / 自渲染的 SVG 喂 Visio：四个硬性格式要求（2026-09 实测，必读）
+
+**这条与上面的缺陷 A–D 不是一回事。** 缺陷 A–D 讲的是 draw.io 导出的 SVG 怎么修；
+这一条讲的是**你自己按坐标渲染出来的 SVG**（不经 draw.io）为什么 Visio 一律拒绝打开。
+
+症状高度迷惑人：`Documents.Open(svg)` 直接抛
+`com_error (-2147352567, '发生意外。', (0, 'Visio Professional', '\n\n取消。', ...))`。
+换 `OpenEx` 各种 flag（`0` / `0x40` / `0x80` / `0x400`）、把 `Visible` 设 True 或 False、
+设 `AlertResponse=7` —— **全部无效，报同一个错**。因为这不是 flag 问题，
+是 **Visio 的 SVG 导入器在解析阶段就拒收了，根本没进到打开流程**。
+
+**对照组实测**（同一台机器、同一个 Visio 进程）：
+
+| SVG | 来源 | 结果 |
+|---|---|---|
+| `fig34_flat2.svg` | draw.io v29 CLI 导出 + 扁平化 | ✅ `shapes=82` |
+| `fig34_v3.svg` | 自己按坐标渲染 | ❌ 全部 flag 失败 |
+
+逐项 diff 后定位到**四个必补项**（缺任意一项都会失败）：
+
+1. **必须带 XML 声明**：`<?xml version="1.0" encoding="UTF-8"?>` 作为文件第一行。
+   自渲染脚本常直接写 `<svg ...>`，这就是最常见的失败原因。
+2. **必须带命名空间三件套**：`xmlns="http://www.w3.org/2000/svg"` **+**
+   `xmlns:xlink="http://www.w3.org/1999/xlink"` **+** `version="1.1"`。
+   （`xlink` 即使没用到也要声明。）
+3. **根尺寸必须写 `pt`**，不能写无单位数字/py：
+   `width="448pt" height="269pt" viewBox="0 0 448 269"`。
+   写 px 或裸数字会被按 96dpi 折算甚至直接失败。
+4. **不要用 `<defs>` / `<marker>`**。箭头别用 `marker-end="url(#ah)"` ——
+   实测含 `marker` 的 SVG 导入失败。**改为画「线 + 显式三角 `<path>`」**：
+   线缩短 `ARROW_LEN - 0.6` 避免线头透出三角，再在端点画
+   `M tip L (底边±半宽) Z` 的实心三角。渲染结果与 marker 等价，但 Visio 认。
+
+```python
+# 正确写法
+svg = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+       '<svg xmlns="http://www.w3.org/2000/svg" '
+       'xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" '
+       'width="%.0fpt" height="%.0fpt" viewBox="0 0 %.1f %.1f">%s</svg>'
+       % (W, H, W, H, body))
+```
+
+**同时建议走这条更短的链路**（本次实测一次成功）：自渲染 SVG 是成品，
+**不要再回 draw.io 重导**（`convert` 对 SVG 输入仍会调 draw.io CLI，
+本机无头模式会 GPU 崩溃：`GPU process isn't usable. Goodbye.`）。
+直接调 Visio COM：
+
+```python
+app = win32com.client.DispatchEx("Visio.Application")
+app.Visible = False; app.AlertResponse = 7; app.ScreenUpdating = 0
+doc = app.Documents.Open(svg_path)     # Visio 按扩展名自动选 SVG 导入器
+doc.SaveAs(vsdx_path)
+doc.Close(); app.Quit()
+```
+
+验收（本次实测基准，可当回归标准）：`page = 448 x 269 pt`、`top-level shapes = 84`、
+`text-bearing shapes = 26`，中文标签在形状树里逐条可读。
 
 ## 验收标准（每次转换后都跑）
 

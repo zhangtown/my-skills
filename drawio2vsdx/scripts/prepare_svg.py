@@ -130,11 +130,32 @@ def main():
     body = out[out.find(">", j) + 1:]
     body = re.sub(r"</?g\b[^>]*>", "", body)
     body = re.sub(r"<defs\b.*?</defs>", "", body, flags=re.S)
+
+    # marker 会让 Visio 的 SVG 导入器直接拒收（见 SKILL.md「四个硬性格式要求」第 4 条）。
+    # 这里把 marker-end/start 降级为普通线（丢掉箭头三角），避免整张图导不进去。
+    if "marker-end" in body or "marker-start" in body:
+        k = len(re.findall(r"marker-(?:end|start)=", body))
+        body = re.sub(r'\s*marker-(?:end|start)="[^"]*"', "", body)
+        print("[warn] 去掉了 %d 个 marker 引用 —— 箭头三角会消失，"
+              "建议改用「线 + 显式 <path> 三角」自绘箭头" % k)
+
     elems = re.findall(
         r"<(?:rect|text|path|line|ellipse|polygon)\b[^>]*?(?:/>|>.*?</(?:text|rect|ellipse|polygon|path|line)>)",
         body, re.S)
+
+    # --- 根标签合规化：Visio 需要 XML 声明 + xmlns:xlink + version + pt 尺寸 ---
+    root = head
+    if "xmlns:xlink" not in root:
+        root = root.replace('xmlns="http://www.w3.org/2000/svg"',
+                            'xmlns="http://www.w3.org/2000/svg" '
+                            'xmlns:xlink="http://www.w3.org/1999/xlink"')
+        if "xmlns:xlink" not in root:      # 连 xmlns 都没有的裸 <svg>
+            root = root.replace("<svg", '<svg xmlns="http://www.w3.org/2000/svg" '
+                                        'xmlns:xlink="http://www.w3.org/1999/xlink"', 1)
+    if not re.search(r'\bversion=', root):
+        root = root.replace("<svg", '<svg version="1.1"', 1)
     flat = ('<?xml version="1.0" encoding="UTF-8"?>\n'
-            + head + "\n" + "".join(elems) + "\n</svg>")
+            + root + "\n" + "".join(elems) + "\n</svg>")
     print("扁平元素: %d  (text %d / rect %d)"
           % (len(elems), flat.count("<text"), flat.count("<rect>")))
 
