@@ -1,7 +1,7 @@
 ---
 name: drawio2vsdx
 description: Convert draw.io diagrams (.drawio) into Visio .vsdx or Visio-friendly SVG by driving the draw.io desktop CLI plus Visio COM automation, and insert the result into a Word/WPS 文字 document (.docx) as an editable Visio object. Use when the user wants to convert or hand a diagram to Microsoft Visio (drawio 转 visio, drawio 转 vsdx, 导出成 Visio 格式, Visio 打开 drawio 文件), when a diagram must be placed into a Word 文档 / WPS 文字文档 (在 word 里插入 visio 流程图, 把流程图插进文档, 文档插图, 报告里加流程图, 一键插入), when Visio shows garbled or displaced labels after such a conversion (中文乱码, 文字跑到左上角, 文字丢失, 文本框变空白), or when several diagrams must be converted in one go (批量转换 drawio, 批量导出 vsdx, 多页 drawio 导出). Do NOT use it to author new diagrams — that is the `drawio` skill — and it does not do the reverse direction (vsdx → drawio).
-version: 1.4.0
+version: 1.5.0
 ---
 
 # drawio → Visio (.vsdx) 转换
@@ -213,6 +213,56 @@ doc.Close(); app.Quit()
 
 验收（本次实测基准，可当回归标准）：`page = 448 x 269 pt`、`top-level shapes = 84`、
 `text-bearing shapes = 26`，中文标签在形状树里逐条可读。
+
+### ⚠️⚠️⚠️ 第五个必补项：多行文本的换行会被 Visio 丢掉（2026-09 实测）
+
+**症状**：SVG 里一个 `<text>` 用多个 `<tspan dy="18.2">` 各占一行，
+Visio 导入后**所有行被拼成一整行**（用空格连接），标签挤在框里一行拉长。
+
+```xml
+<!-- 输入：正确的三行 -->
+<text x="502" y="132"><tspan x="502" dy="-18.2">研究方向一　分层威胁建模</tspan>
+  <tspan x="502" dy="18.2">四层网络威胁模型；链路环境参数化建模</tspan>
+  <tspan x="502" dy="18.2">攻防用例参数化派生</tspan></text>
+```
+→ Visio 里变成 `研究方向一　分层威胁建模 四层网络威胁模型；链路环境参数化建模 攻防用例参数化派生`
+
+**试过但无效**：
+- 把多个 tspan 合并成一个、行间插 `&#10;` —— Visio 把 `&#10;` 当普通空白
+- 给 `<text>` 加 `xml:space="preserve"` —— 不解决 tspan 拼平问题
+
+**✅ 有效解法：导入后用 COM 重写 `Shape.Text`。**
+Visio 的 `Shape.Text` setter 会正确把 `\n` 落成多行段落（导出的 `page1.xml` 里是 `\r\n`）。
+
+```python
+# 1) 从源 YAML/数据里准备 {拼接形式: [行1, 行2, ...]} 映射
+lines_map = {"研究方向一　分层威胁建模四层网络威胁模型；链路环境参数化建模": 
+             ["研究方向一　分层威胁建模", "四层网络威胁模型；链路环境参数化建模"]}
+
+# 2) 导入后遍历形状修正
+doc = app.Documents.Open(svg)
+for shp in doc.Pages.Item(1).Shapes:
+    t = shp.Text
+    if not t: continue
+    key = t.replace(" ", "")                       # 归一化（Visio 用空格连行）
+    hit = lines_map.get(t) or next((v for k, v in lines_map.items()
+                                    if k.replace(" ", "") == key), None)
+    if hit:
+        shp.Text = "\n".join(hit)                  # ← 关键：setter 认换行
+doc.SaveAs(vsdx)
+```
+
+**验收**：重开 `page1.xml`，确认目标 `<Text>` 里出现 `\r\n`（不是空格）。
+
+### 从 `.vsdx` 回看效果（无法本地开 Visio 时的验收手段）
+
+```python
+page.Export("preview.png")     # Visio COM 直接截图，比解析 XML 直观
+# 或读像素尺寸自查：PNG 头 offset 16..24 是大端 width/height
+```
+
+对 1304×920 pt 的页面导出得到 2173×1533 px（约 120 dpi）；
+docx 内嵌用这张即可（按 15 cm 宽折算约 360 dpi）。
 
 ## 验收标准（每次转换后都跑）
 
