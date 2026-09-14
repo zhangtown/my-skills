@@ -1,7 +1,7 @@
 ---
 name: drawio2vsdx
-description: Convert draw.io diagrams (.drawio) into Visio .vsdx or Visio-friendly SVG by driving the draw.io desktop CLI plus Visio COM automation. Use when the user wants to open, convert or hand off a draw.io/drawio diagram to Microsoft Visio (drawio 转 visio, drawio 转 vsdx, 导出成 Visio 格式, Visio 打开 drawio 文件, 把流程图给客户改成 Visio), when Visio shows garbled or displaced labels after such a conversion (中文乱码, 文字跑到左上角, 文字丢失, 文本框变空白), or when several .drawio files must be converted in one go (批量转换 drawio, 批量导出 vsdx, 多页 drawio 导出). Do NOT use it to author new diagrams — that is the `drawio` skill — and it does not do the reverse direction (vsdx → drawio).
-version: 1.0.0
+description: Convert draw.io diagrams (.drawio) into Visio .vsdx or Visio-friendly SVG by driving the draw.io desktop CLI plus Visio COM automation, and insert the result into a Word/WPS 文字 document (.docx) as an editable Visio object. Use when the user wants to convert or hand a diagram to Microsoft Visio (drawio 转 visio, drawio 转 vsdx, 导出成 Visio 格式, Visio 打开 drawio 文件), when a diagram must be placed into a Word 文档 / WPS 文字文档 (在 word 里插入 visio 流程图, 把流程图插进文档, 文档插图, 报告里加流程图, 一键插入), when Visio shows garbled or displaced labels after such a conversion (中文乱码, 文字跑到左上角, 文字丢失, 文本框变空白), or when several diagrams must be converted in one go (批量转换 drawio, 批量导出 vsdx, 多页 drawio 导出). Do NOT use it to author new diagrams — that is the `drawio` skill — and it does not do the reverse direction (vsdx → drawio).
+version: 1.2.0
 ---
 
 # drawio → Visio (.vsdx) 转换
@@ -24,7 +24,43 @@ python "$S" convert a.drawio b.drawio 目录/ --outdir out   # 批量；目录�
 python "$S" convert big.drawio --all-pages                 # 多页 → big.p1.vsdx, big.p2.vsdx
 python "$S" verify out/图.vsdx         # 验收：打印形状树 + 文本，证明文字可编辑
 python "$S" fix-svg in.svg -o out.svg  # 仅修 SVG 文本（不碰 Visio）
+
+# 一键插进 WPS 文字 / Word 文档（默认可编辑的 Visio 对象）
+python "$S" word 图.drawio -d 报告.docx --at "{{流程图}}" --width-cm 12 --caption "图1  处理流程"
 ```
+
+## 插进 WPS 文字 / Word 文档（一键）
+
+```bash
+python "$S" word 图.drawio -d 报告.docx                      # 插到文末
+python "$S" word 图.drawio -d 报告.docx --at "{{流程图}}"      # 替换掉这个标记（推荐）
+python "$S" word 图.drawio -d 报告.docx --at end --in-place   # 原地写回（自动先存 .bak）
+python "$S" word 图.vsdx   -d 报告.docx --mode picture        # 只放矢量图，不要可编辑对象
+```
+
+| 开关 | 作用 |
+|---|---|
+| `-d/--doc` | 目标 `.docx`（必填） |
+| `--at` | `end`（默认）/ `start` / **一段标记文本**，写成标记时会把那段文字替换成图（自建段落扫描，不用 Range.Find，WPS 下稳） |
+| `--mode ole` | 默认。插入 **可双击编辑的 Visio 对象**，文档里存 `word/embeddings/oleObject1.bin`（ProgID `Visio.Drawing.15`）+ 一张 `image1.emf` 矢量显示图 |
+| `--mode picture` | 只插矢量 EMF 图片（`.vsdx` 输入不支持此模式） |
+| `--width-cm` | 按宽度缩放（自动保持长宽比）并居中 |
+| `--caption` | 图下自动加一行居中图题 |
+| `-o` / `--in-place` | 输出到 `原名_插图.docx`（默认）/ 原地覆盖（先备份 `原名.bak.docx`） |
+
+**推荐工作流**：在文档里想放图的位置打一行 `{{流程图}}`，然后一条命令 —— 标记被图替换，其余正文一字不动。
+
+**本机事实（2026-09 实测）**：这台机器**没装 Microsoft Word**（`Word.Application` 的 LocalServer32 为空、各处无 `WINWORD.EXE`），`.docx` 默认由 **WPS Office 12.1.0.25865**（`C:\Program Files\WPS Office\12.1.0.25865\office6\wps.exe`）打开。WPS 文字通过 `KWPS.Application` 提供 Word 兼容 COM（自己报 `Name='Microsoft Word' Version='12.0'`），`InlineShapes.AddOLEObject` / `AddPicture` 都可用 —— 脚本先试 `KWPS.Application` 再退到 `Word.Application`，两边都能跑。Visio 是微软正版 16.0，负责 SVG→VSDX 与 SVG→EMF。
+
+**验收看什么**（脚本每次自动打印）：
+
+```
+[ok]   embedded Visio object: Visio.Drawing.15, word/embeddings/oleObject1.bin 15,360 B — double-click opens Visio
+       media word/media/image1.emf 9,704 B
+[ok]   marker '{{流程图}}' no longer in the text (replaced by the diagram)
+```
+
+双击那个对象就回 Visio 编辑，改完关闭，文档里的显示图自动更新。
 
 ## 为什么是这条链路（不是别的）
 
@@ -84,8 +120,9 @@ python "$S" verify out/图.vsdx
 | 依赖 | 说明 |
 |---|---|
 | draw.io Desktop | 提供 CLI。默认查 `C:\Program Files\draw.io\draw.io.exe`，可用环境变量 `DRAWIO_EXE` 覆盖 |
-| Microsoft Visio | 只在出 vsdx 时需要。查 `C:\Program Files\Microsoft Office\root\Office16\VISIO.EXE`，可 `VISIO_EXE` 覆盖 |
-| pywin32 | `python -m pip install pywin32`；仅 vsdx 模式需要，`fix-svg` 不用 |
+| Microsoft Visio | 出 vsdx / EMF 时需要。查 `C:\Program Files\Microsoft Office\root\Office16\VISIO.EXE`，可 `VISIO_EXE` 覆盖 |
+| WPS 文字 或 MS Word | `word` 子命令用。WPS 走 `KWPS.Application`，MS Word 走 `Word.Application`，脚本自动选 |
+| pywin32 | `python -m pip install pywin32`；vsdx / EMF / 文档插入都需要，`fix-svg` 不用 |
 
 没有 Visio 时的替代路径：`--mode svg` 出 SVG，再在 Visio 里「打开 / 插入 → 图片 → SVG」手动导入，效果等价（只是多一步点击）。
 
@@ -97,4 +134,4 @@ python "$S" verify out/图.vsdx
 
 ## 文件
 
-- `scripts/drawio2vsdx.py` —— 全部实现（doctor / convert / verify / fix-svg），纯标准库 + pywin32，可直接当 CLI 用
+- `scripts/drawio2vsdx.py` —— 全部实现（doctor / convert / verify / fix-svg / word），纯标准库 + pywin32，可直接当 CLI 用
