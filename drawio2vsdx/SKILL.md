@@ -1,7 +1,7 @@
 ---
 name: drawio2vsdx
 description: Convert draw.io diagrams (.drawio) into Visio .vsdx or Visio-friendly SVG by driving the draw.io desktop CLI plus Visio COM automation, and insert the result into a Word/WPS 文字 document (.docx) as an editable Visio object. Use when the user wants to convert or hand a diagram to Microsoft Visio (drawio 转 visio, drawio 转 vsdx, 导出成 Visio 格式, Visio 打开 drawio 文件), when a diagram must be placed into a Word 文档 / WPS 文字文档 (在 word 里插入 visio 流程图, 把流程图插进文档, 文档插图, 报告里加流程图, 一键插入), when Visio shows garbled or displaced labels after such a conversion (中文乱码, 文字跑到左上角, 文字丢失, 文本框变空白), or when several diagrams must be converted in one go (批量转换 drawio, 批量导出 vsdx, 多页 drawio 导出). Do NOT use it to author new diagrams — that is the `drawio` skill — and it does not do the reverse direction (vsdx → drawio).
-version: 1.2.0
+version: 1.3.0
 ---
 
 # drawio → Visio (.vsdx) 转换
@@ -28,6 +28,28 @@ python "$S" fix-svg in.svg -o out.svg  # 仅修 SVG 文本（不碰 Visio）
 # 一键插进 WPS 文字 / Word 文档（默认可编辑的 Visio 对象）
 python "$S" word 图.drawio -d 报告.docx --at "{{流程图}}" --width-cm 12 --caption "图1  处理流程"
 ```
+
+### 推荐链路（draw.io v29 起，务必先 prepare 再 convert）
+
+```bash
+P=~/.skills-manager/skills/drawio2vsdx/scripts/prepare_svg.py
+
+# 1) 先修 SVG：重建文字坐标 + 扁平化 + 尺寸改 pt
+python "$P" raw.svg ready.svg --drawio 原文件.drawio
+# 2) 再转 Visio
+python "$S" convert ready.svg --mode vsdx --keep-svg
+# 3) 验收（并且先杀残留 Visio 进程，否则导出是缓存）
+python "$S" verify ready.vsdx
+```
+
+`prepare_svg.py` 处理的是 SKILL.md「四个真实缺陷」里的 A/B/C；
+缺陷 D（残留 Visio 进程返回缓存导出）需自己杀进程：
+
+```powershell
+Stop-Process -Name VISIO -Force -ErrorAction SilentlyContinue
+```
+
+`--shrink 0.92` 可以在文字恰好占满框宽时留一点余量，避免 Visio 边缘折行。
 
 ## 插进 WPS 文字 / Word 文档（一键）
 
@@ -95,15 +117,44 @@ python "$S" word 图.vsdx   -d 报告.docx --mode picture        # 只放矢量�
 - `--visible` 显示 Visio 窗口（默认隐藏，只闪一下）
 - `--recursive` 目录输入时递归子目录
 
-## 三个坑（本技能已内建处理）
+## 坑（本技能已内建处理 + 使用前必读）
 
 1. **文字丢失 / 跑到左上角 / 中文乱码**：draw.io 有些版本把文字写成
    `<switch><foreignObject>(XHTML)</foreignObject>…</switch>`，Visio 不认 foreignObject 这一支，
    于是标签要么消失、要么挤成一坨。`convert` 出 vsdx 前会自动把这类文本重写为普通 `<text>`
    （有兜底 text 元素就沿用其坐标，没有就按 foreignObject 框中心合成）。
-   本机 draw.io v29.0.3 已经直接输出 `<text>`，这步是防御性空转；老版本或别人给的 SVG 会命中。
 2. **多页只导了第一页**：draw.io CLI 的 `-a/--all-pages` 只对 PDF 有效，SVG 必须按页号循环 —— 这就是 `--all-pages` 的实现方式。
 3. **转完在 Visio 里选不中单个框**：Visio 把整张图作为一个组合导入。`Ctrl+Shift+U`（或右键 → 组合 → 取消组合）解开后即可单独编辑；文字此时已是原生文本。
+
+### ⚠️ draw.io v29.0.3 实测的四个真实缺陷（2026-09 补充，务必先处理）
+
+这版 draw.io 的 SVG 导出**不是**坑 1 描述的 `<switch>` 形态，而是：
+
+```xml
+<g data-cell-id="n4"><g transform="translate(0.5,0.5)"><rect x="6" y="26" width="69.36" height="18"/></g>
+  <g><g><text x="0.0" y="0.0" text-anchor="middle" font-family="Helvetica" font-size="12">标签</text></g></g></g>
+```
+
+- **缺陷 A｜文字坐标是假的**。每个 `<text>` 都是 `x="0.0" y="0.0"`，且 `font-family`/`font-size`
+  也不是你在 `.drawio` 里设的值。本技能的 `fix_foreign_object` 若无 `<switch>` 可改就会原样放过，
+  结果所有文字堆在原点（现象：**框是空的**）。
+  → **对策**：转换前**按同一 cell 的 `<rect>` 几何重建 `<text>`**（居中 `x=rx+rw/2`；
+  泳道标题等 `align=left` 的用 `x=rx+2, text-anchor=start`；字号取 `.drawio` 里该
+  `mxCell` 的 `fontSize`）。
+- **缺陷 B｜嵌套组导致折行（最隐蔽）**。`<g data-cell-id>` 会让 Visio 生成**按父级比例缩放**的
+  子形状，字号被算歪 → 中文全部折行（"统一接入描/述"）。
+  → **对策**：**扁平化 SVG** —— 抽掉所有 `<g data-cell-id>`，只把 `rect`/`text`/`path`
+  平铺到根（drawio 这些组没有额外 transform，坐标已是绝对值）。扁平后 Visio 存的是
+  真实 `Char.Size`（如 `0.114 in = 8.21 pt`）与真实 `Width`，折行消失，
+  且 `top-level shapes` 从 1 变成元素个数。
+- **缺陷 C｜根尺寸写 `px` 会被按 96dpi 折算**。`width="424px"` → Visio 页面只有 318pt（×0.75）。
+  → **对策**：根 `<svg>` 的 `width`/`height` 直接写 **`pt`**（`width="424pt"`），页面即设计尺寸。
+- **缺陷 D｜残留 `VISIO.EXE` 进程返回缓存导出**。导出文件字节数完全一样，会让人误判"改动无效"。
+  → **对策**：跑前 `Stop-Process -Name VISIO -Force`（或 `taskkill /IM VISIO.EXE /F`）。
+
+**别再用** `shape.CellsSRC(3,0,0).FormulaU="X pt"` / `shape.Characters.CharProps(0, fs)` /
+`AddRow` 去 Visio 里改字号 —— 在 SVG 导入的**嵌套组**上这些都写不进去（导出的 XML 里根本
+不出现 `Char.Size`）。根因是缺陷 B 的嵌套缩放，正确解法是扁平化，不是换 API。
 
 ## 验收标准（每次转换后都跑）
 
@@ -122,7 +173,12 @@ python "$S" verify out/图.vsdx
 | draw.io Desktop | 提供 CLI。默认查 `C:\Program Files\draw.io\draw.io.exe`，可用环境变量 `DRAWIO_EXE` 覆盖 |
 | Microsoft Visio | 出 vsdx / EMF 时需要。查 `C:\Program Files\Microsoft Office\root\Office16\VISIO.EXE`，可 `VISIO_EXE` 覆盖 |
 | WPS 文字 或 MS Word | `word` 子命令用。WPS 走 `KWPS.Application`，MS Word 走 `Word.Application`，脚本自动选 |
-| pywin32 | `python -m pip install pywin32`；vsdx / EMF / 文档插入都需要，`fix-svg` 不用 |
+| pywin32 | `python -m pip install pywin32`；vsdx / EMF / 文档插入都需要，`fix-svg` / `prepare-svg` 不用 |
+
+**本机实测环境（2026-09）**：draw.io 29.0.3 + Visio 16.0 + pywin32 312（装在
+`C:\Users\ELEX-ZT\.workbuddy\binaries\python\envs\default`）。该 venv 的 python 路径：
+`...\envs\default\Scripts\python.exe`。从 Bash 调脚本时用**绝对路径**，
+`cd xxx && python script.py` 在这个 shell 里 cwd 可能不生效。
 
 没有 Visio 时的替代路径：`--mode svg` 出 SVG，再在 Visio 里「打开 / 插入 → 图片 → SVG」手动导入，效果等价（只是多一步点击）。
 
@@ -135,3 +191,5 @@ python "$S" verify out/图.vsdx
 ## 文件
 
 - `scripts/drawio2vsdx.py` —— 全部实现（doctor / convert / verify / fix-svg / word），纯标准库 + pywin32，可直接当 CLI 用
+- `scripts/prepare_svg.py` —— **转换前的 SVG 预处理**（重建文字坐标 / 扁平化 / px→pt / 去 light-dark），
+  针对 draw.io v29 的缺陷 A/B/C。用法见上方「推荐链路」
