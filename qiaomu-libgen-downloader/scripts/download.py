@@ -2,21 +2,36 @@
 """从 LibGen.li 搜索和下载电子书"""
 import subprocess, re, os, time, urllib.parse, argparse, sys, json
 
-BASE = "https://libgen.li"
+BASE = os.environ.get("LIBGEN_BASE", "https://libgen.li")
+
+
+class NetworkError(RuntimeError):
+    """BASE 不可达（超时 / 被网络阻断），区别于「搜到了但为空」"""
+
 
 def curl(url, timeout=20):
-    r = subprocess.run(
-        ["curl", "-sL", "--max-time", str(timeout), url],
-        capture_output=True, text=True, timeout=timeout + 5
-    )
+    """返回页面内容；网络失败返回 None（而不是空串）"""
+    try:
+        r = subprocess.run(
+            ["curl", "-sL", "--max-time", str(timeout), url],
+            capture_output=True, encoding="utf-8", errors="replace", timeout=timeout + 5
+        )
+    except subprocess.TimeoutExpired:
+        return None
+    if r.returncode != 0:
+        return None
     return r.stdout
 
+
 def search(query):
-    """搜索并返回 MD5 列表"""
+    """搜索并返回 MD5 列表；站点不可达时抛 NetworkError"""
     url = f"{BASE}/index.php?req={urllib.parse.quote(query)}&open=0&res=25&view=simple&phrase=1&column=def"
     html = curl(url, timeout=20)
-    if not html:
-        return []
+    if html is None:
+        raise NetworkError(
+            f"无法访问 {BASE}（连接超时或被网络阻断）。"
+            f"可设置 HTTPS_PROXY 走代理，或用 LIBGEN_BASE 指定可用镜像。"
+        )
     return re.findall(r'href="/ads\.php\?md5=([a-f0-9]{32})"', html)
 
 def get_download_url(md5):
@@ -47,7 +62,7 @@ def download(query, output_dir=".", max_tries=3):
         outfile = os.path.join(output_dir, f"{safe}.epub")
         r = subprocess.run(
             ["curl", "-sL", "--max-time", "60", "-o", outfile, dl_url],
-            capture_output=True, text=True, timeout=90
+            capture_output=True, encoding="utf-8", errors="replace", timeout=90
         )
 
         if os.path.exists(outfile) and os.path.getsize(outfile) > 10000:
@@ -93,15 +108,19 @@ def main():
     parser.add_argument("--list", action="store_true", help="只列出搜索结果")
     args = parser.parse_args()
 
-    if args.list:
-        list_results(args.query)
-    else:
-        result = download(args.query, args.output)
-        if result:
-            print(json.dumps({"ok": True, "file": result}))
+    try:
+        if args.list:
+            list_results(args.query)
         else:
-            print(json.dumps({"ok": False}))
-            sys.exit(1)
-
+            result = download(args.query, args.output)
+            if result:
+                print(json.dumps({"ok": True, "file": result}))
+            else:
+                print(json.dumps({"ok": False}))
+                sys.exit(1)
+    except NetworkError as e:
+        print(f"\u26a0\ufe0f  {e}", file=sys.stderr)
+        print(json.dumps({"ok": False, "error": "network_unreachable", "base": BASE}))
+        sys.exit(2)
 if __name__ == "__main__":
     main()
