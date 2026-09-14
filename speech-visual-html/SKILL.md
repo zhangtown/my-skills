@@ -1191,6 +1191,53 @@ im.crop((0, mid, w, h)).save('素材17b.jpg', quality=90)
 ```
 （阅读顺序是左=上半、右=下半，对文字截图是自然的；纯图片/照片类素材不要这样切。）
 
+### 坑 4：开场飞入的拼贴图太小 / 盖不住屏
+
+模板 `.collage .c1~.c12` 是按 **15%~21% 宽度**排的，这个尺寸**只对横图成立**。
+素材是**竖版截图**（宽高比 0.5~0.7）时，21% 宽的图会变成约 70% 屏高，
+几张叠起来把标题糊住；于是很容易"顺手"改成 `height:22vh` 之类的小缩略图——
+**画面就空了**。用户明确否决过："开场飞入的图都太小了，我想要占满整个屏幕的效果。"
+
+**修法：按"百分比宽 + vh 高 + `object-fit:cover`"给每张图一个大尺寸，允许出血出屏，做成真正的满屏照片墙。**
+
+```css
+.collage{overflow:hidden}
+.collage img{width:var(--w,32%)!important;height:var(--h,44vh)!important;
+             max-width:none!important;max-height:none!important;
+             object-fit:cover;border-radius:0.6rem}
+```
+```html
+<!-- 每张图内联给尺寸，!important 覆盖掉模板 .c1~.c12 的 width -->
+<img class="c1" src="素材1.jpg" style="animation-delay:.3s;--w:32%;--h:44vh">
+<img class="c2" src="素材2.jpg" style="animation-delay:.3s;--w:34%;--h:48vh">
+```
+尺寸建议：**28%~34% 宽 × 40%~48vh 高**，12 张错落叠放即可铺满；
+`object-fit:cover` 会裁掉竖图上下，对"封面装饰"是可接受的（正文页的素材图不要这样裁）。
+
+**标题可读性（两个坑）：**
+
+1. **不要用径向渐变蒙版。** `radial-gradient(ellipse ...)` 会在画面里留下一条肉眼可见的深色椭圆边界，
+   看起来像一块脏印子。改用**均匀的垂直线性渐变**：
+   ```css
+   .slide-cover::after{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;
+     background:linear-gradient(180deg,rgba(8,8,10,.52) 0%,rgba(8,8,10,.34) 32%,
+                rgba(8,8,10,.34) 64%,rgba(8,8,10,.58) 100%)}
+   .cover-main,.cover-sub{position:relative;z-index:3}
+   ```
+2. **去掉模板自带的红色辉光**（`0 0 3.75rem rgba(196,30,36,.5)`）：红字叠红光会糊成一团。
+   换纯黑多层阴影，并给标题加一块**毛玻璃底板**，这样图片亮度不用牺牲：
+   ```css
+   .cover-main{text-shadow:0 .125rem .5rem rgba(0,0,0,.95),0 0 1.5rem rgba(0,0,0,.9);
+     background:rgba(10,10,12,.62);backdrop-filter:blur(.875rem);-webkit-backdrop-filter:blur(.875rem);
+     padding:1.25rem 2.75rem;border-radius:1.5rem;border:.0625rem solid rgba(255,255,255,.10)}
+   .cover-sub{margin-top:1rem;background:rgba(10,10,12,.62);backdrop-filter:blur(.875rem);
+     padding:.875rem 2rem;border-radius:1rem}
+   ```
+
+**验收**：截图必须取**动画结束后的稳定态**（预览脚本里把 `.collage img` 的 `animation` 置 none），
+再目视确认三件事——① 图片到边缘、没有大片空白；② 标题在图上清晰可读；
+③ 画面里没有渐变造成的深色边界。
+
 ### 怎么用视觉检查内容占比（必做）
 
 单看结构校验发现不了这个问题，必须**截图 + 量内容包围盒**：
@@ -1219,7 +1266,9 @@ for i in range(19):
   - 新增「实战经验（v5.9）」：模板默认尺寸偏小（1rem=16px、正文 18px）→ 根字号 120→96；
     `.lr-left/.lr-right` flex:1 导致图文分离甚至文字压图 → 改 grid 双列 + 图片显式尺寸；
     竖版长截图在 16:9 里只占约 30% 宽 → 对半切成横版并排；
-    附「量内容包围盒」的视觉检查方法与 ≥70% 判定线
+    附「量内容包围盒」的视觉检查方法与 ≥70% 判定线；
+    新增「坑 4：开场飞入图太小」——模板拼贴尺寸只对横图成立，竖版素材须按 %宽+vh 高+cover 铺满，
+    并改用均匀渐变蒙版 + 标题毛玻璃底板（径向蒙版会留可见边界、红字红光会糊）
 
 - v5.5: 动画扩充 CSS 档（契约同步升级 v5.3→v5.4，与 ztEdit 编辑器同发）
   - 新增入场效果：`wipe` 擦除滑入（clip-path）、`flip` 3D翻转、`blur-in` 虚化聚焦（filter）、`slide-spin` 旋转滑入
