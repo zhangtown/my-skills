@@ -301,6 +301,270 @@ def dump_vsdx(vsdx: Path) -> tuple[list[str], int, int]:
     return out, total, ntext
 
 
+# ------------------------------------------------- Word / WPS 文字 文档插图
+
+
+def svg_to_emf(svg: Path, emf: Path, visible: bool = False) -> Path:
+    """Visio COM: import SVG and export a vector EMF (crisp at any zoom)."""
+    import win32com.client
+
+    svg, emf = Path(svg).resolve(), Path(emf).resolve()
+    app = win32com.client.DispatchEx("Visio.Application")
+    try:
+        try:
+            app.Visible = visible
+        except Exception:
+            pass
+        doc = app.Documents.Open(str(svg))
+        try:
+            if emf.exists():
+                emf.unlink()
+            doc.Pages.Item(1).Export(str(emf))
+        finally:
+            doc.Close()
+    finally:
+        try:
+            app.Quit()
+        except Exception:
+            pass
+    if not emf.is_file() or emf.stat().st_size == 0:
+        raise RuntimeError(f"Visio EMF export failed: {emf}")
+    return emf
+
+
+def docx_app():
+    """Open the word processor over COM.
+
+    WPS 文字 registers itself as KWPS.Application (and reports Name='Microsoft
+    Word', Version='12.0'), so this works whether the machine runs WPS or real
+    MS Word.
+    """
+    import win32com.client
+
+    last = None
+    for prog in ("KWPS.Application", "Word.Application"):
+        try:
+            return win32com.client.DispatchEx(prog), prog
+        except Exception as e:          # try the next ProgID
+            last = e
+    raise RuntimeError(f"no word processor COM server (KWPS.Application / Word.Application): {last}")
+
+
+def _find_marker_range(doc, marker: str):
+    """Paragraph scan (works in WPS; Range.Find is flakier there).  Returns a
+    Range covering just the marker text, or None."""
+    try:
+        n = doc.Paragraphs.Count
+    except Exception:
+        return None
+    for i in range(1, n + 1):
+        try:
+            pr = doc.Paragraphs.Item(i).Range
+            txt = pr.Text or ""
+        except Exception:
+            continue
+        idx = txt.find(marker)
+        if idx >= 0:
+            start = pr.Start + idx
+            return doc.Range(start, start + len(marker))
+    return None
+
+
+def insert_into_doc(doc_path: Path, media: Path, out_path: Path, mode: str = "ole",
+                    at: str = "end", width_cm: float | None = None, caption: str | None = None,
+                    visible: bool = False) -> dict:
+    """Insert a .vsdx (as an editable OLE object) or an .emf (vector picture) into a .docx."""
+    media, doc_path, out_path = Path(media).resolve(), Path(doc_path).resolve(), Path(out_path).resolve()
+    app, prog = docx_app()
+    info: dict = {"progid": prog, "placement": at}
+    try:
+        try:
+            app.Visible = visible
+        except Exception:
+            pass
+        try:
+            app.DisplayAlerts = 0
+        except Exception:
+            pass
+        doc = app.Documents.Open(str(doc_path))
+        try:
+            if at == "end":
+                rng = doc.Range(doc.Content.End - 1, doc.Content.End - 1)
+            elif at == "start":
+                rng = doc.Range(0, 0)
+            else:
+                found = _find_marker_range(doc, at)
+                if found is None:
+                    raise RuntimeError(f"marker {at!r} not found in {doc_path.name}")
+                start = found.Start
+                found.Delete()
+                rng = doc.Range(start, start)
+                info["placement"] = f"marker {at!r} replaced"
+
+            if mode == "ole":
+                shp = rng.InlineShapes.AddOLEObject(ClassType="Visio.Drawing.15",
+                                                    FileName=str(media), LinkToFile=False)
+            else:
+                shp = rng.InlineShapes.AddPicture(str(media))
+            try:
+                if width_cm:
+                    ratio = shp.Height / shp.Width
+                    shp.Width = width_cm * 28.3465
+                    shp.Height = shp.Width * ratio
+                info["size_pt"] = (round(shp.Width, 1), round(shp.Height, 1))
+                info["shape_type"] = shp.Type      # 1 = embedded OLE object, 3 = picture
+            except Exception:
+                pass
+            try:
+                rng.Paragraphs.Item(1).Alignment = 1       # centre the diagram
+            except Exception:
+                pass
+
+            if caption:
+                try:
+                    rng2 = doc.Range(rng.End, rng.End)
+                    rng2.InsertParagraphAfter()
+                    rng2 = doc.Range(rng.End + 1, rng.End + 1)
+                    rng2.Text = caption
+                    rng2.Paragraphs.Item(1).Alignment = 1
+                    info["caption"] = caption
+                except Exception as e:
+                    info["caption_error"] = str(e)
+
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            same_file = os.path.normcase(str(out_path)) == os.path.normcase(str(doc_path))
+            if same_file:
+                doc.Save()                          # in place: the open file is locked, cannot unlink
+            else:
+                if out_path.exists():
+                    out_path.unlink()
+                doc.SaveAs(str(out_path), 16)      # wdFormatDocumentDefault (.docx)
+        finally:
+            doc.Close(0)                            # wdDoNotSaveChanges
+    finally:
+        try:
+            app.Quit()
+        except Exception:
+            pass
+    if not out_path.is_file():
+        raise RuntimeError(f"word processor did not write {out_path}")
+    info["out"] = str(out_path)
+    info["out_bytes"] = out_path.stat().st_size
+    return info
+
+
+def inspect_docx(path: Path) -> dict:
+    """Prove what actually landed inside the .docx (OLE bin / ProgID / media)."""
+    import zipfile
+
+    res: dict = {"ole": [], "media": [], "progids": [], "ole_tags": []}
+    with zipfile.ZipFile(path) as z:
+        for n in z.namelist():
+            if n.endswith("/"):
+                continue                      # directory entries carry no payload
+            if "embeddings/" in n:
+                b = z.read(n)
+                res["ole"].append((n, len(b)))
+                for pat in (b"Visio.Drawing.15", b"Visio.Drawing.11", b"Visio.Drawing.5"):
+                    if pat in b:
+                        res["progids"].append(pat.decode())
+            elif n.startswith("word/media/"):
+                res["media"].append((n, z.getinfo(n).file_size))
+        try:
+            doc = z.read("word/document.xml").decode("utf-8", "ignore")
+            res["ole_tags"] = re.findall(r'<o:OLEObject[^>]*ProgID="([^"]+)"', doc)
+            res["text"] = "".join(re.findall(r"<w:t[^>]*>([^<]*)</w:t>", doc))
+        except Exception:
+            pass
+    return res
+
+
+def cmd_word(a) -> int:
+    import tempfile
+
+    src = Path(a.input)
+    if not src.is_file():
+        print(f"error: no such file: {src}", file=sys.stderr)
+        return 2
+    target_doc = Path(a.doc)
+    if not target_doc.is_file():
+        print(f"error: no such document: {target_doc}", file=sys.stderr)
+        return 2
+    if a.in_place:
+        out = target_doc
+    elif a.output:
+        out = Path(a.output)
+    else:
+        out = target_doc.with_name(target_doc.stem + "_插图" + target_doc.suffix)
+
+    tmp = Path(tempfile.mkdtemp(prefix="d2w-"))
+    try:
+        vsdx = svg = None
+        if src.suffix.lower() == ".vsdx":
+            vsdx = src
+        else:
+            if src.suffix.lower() == ".drawio":
+                drawio = find_drawio()
+                if not drawio:
+                    print("error: draw.io Desktop CLI not found; set DRAWIO_EXE", file=sys.stderr)
+                    return 2
+                svg = tmp / (src.stem + ".svg")
+                export_svg(drawio, src, svg, theme=a.theme)
+            elif src.suffix.lower() == ".svg":
+                svg = src
+            else:
+                print(f"error: unsupported input {src.suffix} (use .drawio / .svg / .vsdx)", file=sys.stderr)
+                return 2
+            if svg is not src and fix_svg_file(svg, svg):
+                pass
+            print(f"[ok]   SVG   {svg}" + ("" if svg is src else "  (temp)"))
+
+        if a.mode == "ole":
+            if vsdx is None:
+                vsdx = tmp / (src.stem + ".vsdx")
+                total, ntext = svg_to_vsdx(svg, vsdx, visible=a.visible)
+                print(f"[ok]   VSDX  {vsdx}   ({total} shapes, {ntext} text shapes)  (temp)")
+            else:
+                print(f"[ok]   VSDX  {vsdx}   (given)")
+            media = vsdx
+        else:                                       # --mode picture needs a vector EMF
+            if svg is None:
+                print("error: --mode picture needs a .drawio or .svg input", file=sys.stderr)
+                return 2
+            emf = tmp / (src.stem + ".emf")
+            svg_to_emf(svg, emf, visible=a.visible)
+            print(f"[ok]   EMF   {emf}   ({emf.stat().st_size:,} B, vector)  (temp)")
+            media = emf
+
+        if a.in_place:
+            backup = target_doc.with_name(target_doc.stem + ".bak" + target_doc.suffix)
+            shutil.copy2(target_doc, backup)
+            print(f"      backup: {backup}")
+        info = insert_into_doc(target_doc, media, out, mode=a.mode, at=a.at,
+                               width_cm=a.width_cm, caption=a.caption, visible=a.visible)
+        size = f", {info['size_pt'][0]}x{info['size_pt'][1]} pt" if info.get("size_pt") else ""
+        print(f"[ok]   DOCX  {out}   ({info['out_bytes']:,} B, {info['progid']}, "
+              f"at {info['placement']}{size})")
+
+        chk = inspect_docx(out)
+        if a.mode == "ole":
+            if chk["ole"] and chk["ole_tags"]:
+                print(f"[ok]   embedded Visio object: {chk['ole_tags'][0]}, "
+                      f"{chk['ole'][0][0]} {chk['ole'][0][1]:,} B — double-click opens Visio")
+            else:
+                print("[warn] no embedded OLE object found in the saved .docx")
+        for n, sz in chk["media"]:
+            print(f"       media {n} {sz:,} B")
+        if a.at not in ("end", "start") and a.at not in (chk.get("text") or ""):
+            print(f"[ok]   marker {a.at!r} no longer in the text (replaced by the diagram)")
+    finally:
+        if a.keep_temp:
+            print(f"      temp kept: {tmp}")
+        else:
+            shutil.rmtree(tmp, ignore_errors=True)
+    return 0
+
+
 # ------------------------------------------------------------------ commands
 
 
@@ -489,6 +753,23 @@ def main(argv: list[str] | None = None) -> int:
     f.add_argument("input", help="SVG file (in place by default)")
     f.add_argument("-o", "--output", help="output SVG (default: overwrite input)")
     f.set_defaults(func=cmd_fix_svg)
+
+    w = sub.add_parser("word", help="insert the diagram into a .docx (WPS 文字 / MS Word) as an editable Visio object")
+    w.add_argument("input", help=".drawio / .svg / .vsdx to place into the document")
+    w.add_argument("-d", "--doc", required=True, help="target .docx document")
+    w.add_argument("-o", "--output", help="output .docx (default: <doc>_插图.docx)")
+    w.add_argument("--in-place", action="store_true",
+                   help="overwrite the original document (a .bak copy is written first)")
+    w.add_argument("--at", default="end", metavar="end|start|MARKER",
+                   help="where to put it: end / start / a marker text to replace (e.g. '{{流程图}}')")
+    w.add_argument("--mode", choices=["ole", "picture"], default="ole",
+                   help="ole = editable Visio object (default); picture = vector EMF image")
+    w.add_argument("--theme", choices=["light", "dark", "auto"], default="light")
+    w.add_argument("--width-cm", type=float, help="scale the diagram to this width")
+    w.add_argument("--caption", help="caption line inserted under the diagram")
+    w.add_argument("--keep-temp", action="store_true", help="keep intermediate SVG/VSDX/EMF files")
+    w.add_argument("--visible", action="store_true", help="show Visio / WPS windows while working")
+    w.set_defaults(func=cmd_word)
 
     v = sub.add_parser("verify", help="dump a .vsdx shape/text structure (proves text is editable)")
     v.add_argument("input", help=".vsdx file")
