@@ -1,0 +1,76 @@
+{
+  "blocks": [
+    {
+      "type": "p",
+      "text": "本部分详细阐述国土空间利用变化数据计算处理模块的接口规范与认证机制，确保与AI模型服务、数据存储层及外部业务系统的对接高效、安全、可扩展。所有接口均遵循RESTful架构风格，使用JSON作为数据交换格式，采用UTF-8编码。接口基路径统一为 /api/v1/calculation，版本号通过URL路径控制，后续版本升级时新增路径如 /api/v2/calculation，保留旧版本兼容运行至生命周期结束。"
+    },
+    {
+      "type": "p",
+      "text": "接口规范覆盖HTTP方法、请求头、响应结构及错误处理。常见的HTTP方法包括GET（查询）、POST（创建）、PUT（全量更新）、PATCH（部分更新）、DELETE（删除）。每个请求必须包含 Content-Type: application/json 和 Accept: application/json 头。响应体统一封装为 {"code":0,"message":"success","data":{}}，其中code为0表示成功，非0表示错误，message为可读提示，data为业务数据。错误码采用三位数字，如401表示未授权，403表示无权限，404表示资源不存在，500表示内部错误，同时返回详细错误信息在message中。"
+    },
+    {
+      "type": "h4",
+      "text": "认证与授权方式"
+    },
+    {
+      "type": "p",
+      "text": "系统采用OAuth 2.0协议结合JWT（JSON Web Token）进行认证授权。客户端（如业务子系统、第三方平台）需先通过 client_id 和 client_secret 向授权服务器申请 access_token，授权类型为 client_credentials。获取的 token 默认有效期24小时，过期后需用 refresh_token 刷新，refresh_token 有效期7天。所有API请求（除认证接口外）必须在HTTP头 Authorization: Bearer <access_token> 中携带有效token。服务端通过网关层统一解析JWT，验证签名和有效期，提取用户身份及角色权限。对于内部微服务间调用，使用服务账号token，权限范围最小化。加密算法采用RSA-2048，密钥对由密钥管理服务定期轮换。"
+    },
+    {
+      "type": "p",
+      "text": "认证流程具体如下：首先，客户端向 /auth/token 接口发送POST请求，携带client_id和client_secret，获取access_token和refresh_token。其次，客户端使用access_token访问业务接口，网关验证通过后路由到后端服务。若access_token过期，客户端使用refresh_token向 /auth/refresh 接口请求新token。若refresh_token也过期，则需重新申请。所有token均存储在Redis集群中，支持分布式场景下的快速校验。为保障安全性，token传输使用HTTPS加密，且禁止在URL参数中传递token。"
+    },
+    {
+      "type": "h4",
+      "text": "主要接口列表与描述"
+    },
+    {
+      "type": "table",
+      "title": "国土空间利用变化数据计算处理模块主要接口一览表",
+      "header": ["接口名称", "HTTP方法", "路径", "功能描述"],
+      "rows": [
+        ["提交计算任务", "POST", "/tasks", "创建新的变化检测计算任务，触发AI模型服务执行推理"],
+        ["查询任务状态", "GET", "/tasks/{taskId}", "获取指定任务的处理进度、状态（等待中/运行中/完成/失败）及结果索引"],
+        ["取消任务", "DELETE", "/tasks/{taskId}", "取消正在运行或等待中的任务，释放资源"],
+        ["获取计算结果", "GET", "/tasks/{taskId}/result", "下载或查询任务输出的变化检测成果（矢量/栅格数据）"],
+        ["模型推理调用", "POST", "/models/inference", "直接调用AI模型进行单次推理，用于实时分析场景（如小范围检测）"],
+        ["模型微调提交", "POST", "/models/fine-tune", "上传训练数据并启动模型微调流程"],
+        ["数据查询", "GET", "/data/landuse", "根据时空范围查询国土空间利用基础数据"],
+        ["数据写入", "POST", "/data/change", "将计算处理后的变化检测结果写入成果数据库"],
+        ["健康检查", "GET", "/health", "监测服务运行状态，返回数据库连接、模型服务等组件的健康指标"]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "接口设计兼顾同步与异步模式。对于耗时较长的计算任务（如大规模影像变化检测），采用异步任务模式：客户端提交任务后立即获得任务ID，通过轮询或WebSocket回调获取状态和结果。对于轻量级查询（如模型推理、数据查询）采用同步模式，响应时间控制在10分钟以内。每个接口均支持分页和过滤参数，如时间范围、地理边界、数据类型等，以提升数据检索效率。接口返回的数据量过大时，采用分块传输或提供预签名URL指向对象存储。"
+    },
+    {
+      "type": "h4",
+      "text": "接口详细定义与示例"
+    },
+    {
+      "type": "p",
+      "text": "以提交计算任务接口 POST /api/v1/calculation/tasks 为例，请求体包含：{ "scene_type": "耕地变化", "input_data": "shapefile_id或影像ID列表", "algorithm": "语义变化检测模型_v2", "parameters": {"confidence_threshold":0.8,"output_format":"GeoJSON"} }。响应体返回任务ID和预估完成时间。查询任务状态接口 GET /api/v1/calculation/tasks/{taskId} 返回当前状态（status）和进度百分比（progress），若状态为completed则额外包含结果元数据（结果数据ID、面积统计等）。获取计算结果接口支持指定格式（GeoJSON或GeoTIFF）和坐标参考（EPSG:4326或CGCS2000）。模型推理调用接口 POST /api/v1/calculation/models/inference 接受影像base64编码或对象存储URL，返回变化区域矢量及置信度。"
+    },
+    {
+      "type": "p",
+      "text": "数据读写接口遵循相同的规范。查询数据接口 GET /api/v1/calculation/data/landuse?bbox=116.3,39.9,116.5,40.0&time=2023-01-01,2023-12-31&page=1&size=100 返回分页后的土地分类图层。写入数据接口 POST /api/v1/calculation/data/change 请求体包含变化图斑几何、属性字段（变化类型、发生时间、面积等），后台自动进行拓扑检查和属性完整性校验，返回写入的记录ID。所有数据接口均支持批量操作，如批量写入时使用数组，但每批不超过1000条。"
+    },
+    {
+      "type": "h4",
+      "text": "接口文档与版本管理"
+    },
+    {
+      "type": "p",
+      "text": "接口规范文档采用OpenAPI 3.0标准编写，并集成到开发流程中。每次版本发布前，由专职接口设计师更新YAML文件，经评审后生成在线文档（如Swagger UI）。开发人员、测试人员及第三方集成方可随时查阅。版本管理遵循语义化版本规范（MAJOR.MINOR.PATCH），当引入不兼容变更时递增主版本号，新增功能但向后兼容时递增次版本号，错误修复或微小改动时递增修订号。旧版本接口在新版本上线后至少保留3个月，并通过响应头 Deprecated 字段标记警告。"
+    },
+    {
+      "type": "p",
+      "text": "为了确保接口对接的顺畅性，我方提供模拟测试环境（Sandbox），使用测试数据和虚拟Token，供外部系统在开发阶段进行联调。正式环境接口调用需在生产环境注册并获得访问权限。所有接口调用均记录审计日志，包括调用方、时间、请求参数、响应状态，日志保留不少于180天。同时，接口调用量、响应时间等性能指标纳入监控告警，当平均响应时间超过10分钟时触发预警，确保符合性能需求。"
+    },
+    {
+      "type": "p",
+      "text": "综上，接口对接设计充分考虑了计算处理模块与AI模型服务、数据存储层及外部系统的集成需求，通过统一的接口规范、安全的认证机制、完善的接口定义和版本管理，保障了系统间的互联互通和长期可维护性。整体方案符合信创环境要求，所有技术选型均基于鲲鹏/飞腾CPU、银河麒麟/统信UOS操作系统、达梦/人大金仓数据库，确保自主可控。"
+    }
+  ]
+}

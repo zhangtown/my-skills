@@ -1,0 +1,47 @@
+=== JSON 解析失败诊断 ===
+时间: 20260701_134538
+阶段: fallback失败(含引号/括号自动修复尝试)
+原文长度: 4291 字符
+提取范围: [0:4291] (4291 字符)
+
+--- 首次解析异常 ---
+JSONDecodeError: Expecting ',' delimiter: line 9 column 184 (char 478)
+
+--- 兜底解析异常 ---
+JSONDecodeError: Expecting ',' delimiter: line 9 column 190 (char 484)
+
+--- 原文前 500 字符 ---
+{
+  "blocks": [
+    {
+      "type": "p",
+      "text": "本部分详细阐述国土空间利用变化数据计算处理模块的接口规范与认证机制，确保与AI模型服务、数据存储层及外部业务系统的对接高效、安全、可扩展。所有接口均遵循RESTful架构风格，使用JSON作为数据交换格式，采用UTF-8编码。接口基路径统一为 /api/v1/calculation，版本号通过URL路径控制，后续版本升级时新增路径如 /api/v2/calculation，保留旧版本兼容运行至生命周期结束。"
+    },
+    {
+      "type": "p",
+      "text": "接口规范覆盖HTTP方法、请求头、响应结构及错误处理。常见的HTTP方法包括GET（查询）、POST（创建）、PUT（全量更新）、PATCH（部分更新）、DELETE（删除）。每个请求必须包含 Content-Type: application/json 和 Accept: application/json 头。响应体统一封装为 {"code":0,"message":"suc
+
+--- 原文后 500 字符 ---
+。旧版本接口在新版本上线后至少保留3个月，并通过响应头 Deprecated 字段标记警告。"
+    },
+    {
+      "type": "p",
+      "text": "为了确保接口对接的顺畅性，我方提供模拟测试环境（Sandbox），使用测试数据和虚拟Token，供外部系统在开发阶段进行联调。正式环境接口调用需在生产环境注册并获得访问权限。所有接口调用均记录审计日志，包括调用方、时间、请求参数、响应状态，日志保留不少于180天。同时，接口调用量、响应时间等性能指标纳入监控告警，当平均响应时间超过10分钟时触发预警，确保符合性能需求。"
+    },
+    {
+      "type": "p",
+      "text": "综上，接口对接设计充分考虑了计算处理模块与AI模型服务、数据存储层及外部系统的集成需求，通过统一的接口规范、安全的认证机制、完善的接口定义和版本管理，保障了系统间的互联互通和长期可维护性。整体方案符合信创环境要求，所有技术选型均基于鲲鹏/飞腾CPU、银河麒麟/统信UOS操作系统、达梦/人大金仓数据库，确保自主可控。"
+    }
+  ]
+}
+
+--- 异常位置附近 [pos-200:pos+200] ---
+    "type": "p",
+      "text": "接口规范覆盖HTTP方法、请求头、响应结构及错误处理。常见的HTTP方法包括GET（查询）、POST（创建）、PUT（全量更新）、PATCH（部分更新）、DELETE（删除）。每个请求必须包含 Content-Type: application/json 和 Accept: application/json 头。响应体统一封装为 {"code":0,"message":"success","data":{}}，其中code为0表示成功，非0表示错误，message为可读提示，data为业务数据。错误码采用三位数字，如401表示未授权，403表示无权限，404表示资源不存在，500表示内部错误，同时返回详细错误信息在message中。"
+    },
+    {
+      "type": "h4",
+      "text":
+
+--- 该位置 repr 值 ---
+'tion/json 和 Accept: application/json 头。响应体统一封装为 {"code":0,"message":"success","data":{}}，其中code为0表示成'

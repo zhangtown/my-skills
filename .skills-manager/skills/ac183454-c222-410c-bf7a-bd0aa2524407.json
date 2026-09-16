@@ -4,7 +4,9 @@
   "path": "grill-me",
   "path_key": "grill-me",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "工具"
+  ],
   "source": {
     "type": "git",
     "ref": "https://github.com/RobMitt/grill-me-skill",

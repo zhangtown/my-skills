@@ -1,0 +1,40 @@
+{
+  "meta": {
+    "project_name": "XX市国土空间基础信息平台建设项目",
+    "doc_type": "技术投标文件",
+    "bidder": "XX科技股份有限公司",
+    "tender_no": "XZC-2026-0123",
+    "date": "2026年6月"
+  },
+  "templates": {
+    "子系统设计": ["功能说明", "技术实现", "关键指标", "架构/流程图"]
+  },
+  "outline": [
+    {
+      "title": "项目理解与需求分析",
+      "chapter_score": 10,
+      "children": [
+        {"title": "建设目标", "note": "解读采购需求，提出统一数据底座与一张图的总体目标。", "weight": 2},
+        {"title": "需求与评分要点对应", "note": "评分点逐条对应到各章节，列表格说明。", "weight": 1}
+      ]
+    },
+    {
+      "title": "总体技术方案",
+      "chapter_score": 30,
+      "children": [
+        {
+          "title": "数据接入",
+          "children": [
+            {"title": "功能设计", "note": "多源异构数据汇聚的功能范围。", "weight": 1, "template": "子系统设计"},
+            {"title": "技术实现", "note": "采集、清洗、入库的技术实现与并发指标。", "weight": 1, "template": "子系统设计"}
+          ]
+        },
+        {"title": "一张图服务", "note": "统一空间数据服务、出图性能与可用性。", "weight": 2, "template": "子系统设计"}
+      ]
+    },
+    {
+      "title": "售后服务与运维保障",
+      "chapter_score": 0
+    }
+  ]
+}
