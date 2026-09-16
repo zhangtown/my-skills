@@ -5,8 +5,7 @@
   "path_key": "drawio",
   "enabled": true,
   "tags": [
-    "工具",
-    "标书"
+    "图表工具"
   ],
   "source": {
     "type": "git",
