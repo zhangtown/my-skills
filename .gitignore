@@ -17,3 +17,10 @@ qwen-tts__skillhub/hf_cache/
 # kimi-pptx 系列打包的 DSL 运行时（约 250MB，超 GitHub 100MB 单文件上限；本地使用，不入库，换机单独拷贝）
 kimi-pptx/scripts/kimi_ppt_dsl.pyz
 kimi-pptx-swarm/scripts/kimi_ppt_dsl.pyz
+
+# ---- 手工维护：本地大资产，绝不入库（勿删；skills-manager 的 auto backup 曾清掉过）----
+/qwen-tts/
+/qwen-tts__skillhub/
+/.skills-manager/
+*.safetensors
+venv/

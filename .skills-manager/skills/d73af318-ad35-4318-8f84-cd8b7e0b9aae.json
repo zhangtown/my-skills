@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "d73af318-ad35-4318-8f84-cd8b7e0b9aae",
+  "path": "qiaomu-libgen-downloader",
+  "path_key": "qiaomu-libgen-downloader",
+  "enabled": true,
+  "tags": [
+    "工具",
+    "标书"
+  ],
+  "source": {
+    "type": "skillssh",
+    "ref": "joeseesun/qiaomu-libgen-downloader/qiaomu-libgen-downloader",
+    "subpath": null,
+    "branch": null
+  }
+}

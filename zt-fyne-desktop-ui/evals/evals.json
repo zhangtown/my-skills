@@ -1,0 +1,73 @@
+[
+  {
+    "id": 0,
+    "name": "config-card-spacing",
+    "prompt": "RemoteNet 客户端的『配置』卡片看着有点挤：输入框和按钮挨得太近，标签和输入框之间也只有一点点缝。帮我把这张卡片放松一点，风格别变。",
+    "expected_output": "方案改 cmd/gui/ui.go 的 cardPadV/cardPadH 与 labelGap（不动 theme.Padding 全局行距、不在 VBox 插占位对象），并列出 go test ./cmd/gui 的设计约束测试。",
+    "expectations": {
+      "with": "6/6",
+      "without": "6/6"
+    }
+  },
+  {
+    "id": 1,
+    "name": "new-log-card",
+    "prompt": "给 RemoteNet 客户端主面板加一张『运行日志』卡片，放在『配置』卡下面，显示最近 20 行日志（等宽字体）。",
+    "expected_output": "复用 card()/cardSlot()、既有色板令牌、theme.Padding 行距规则，并说明 bodyMinHeight/fitBody 只加高不缩宽，同时补测试。",
+    "expectations": {
+      "with": "6/6",
+      "without": "6/6"
+    }
+  },
+  {
+    "id": 2,
+    "name": "window-shadow",
+    "prompt": "RemoteNet 客户端窗口在浅色桌面上看不出边界，帮我加个 1px 描边或者阴影让它浮起来。",
+    "expected_output": "否掉自绘描边与 CS_DROPSHADOW，给 WS_THICKFRAME + WM_NCCALCSIZE(0) 方案，并强调改 glfw C 后要跑 tools/glfwmarker -write。",
+    "expectations": {
+      "with": "6/6",
+      "without": "6/6"
+    }
+  },
+  {
+    "id": 3,
+    "name": "rebuild-and-verify",
+    "prompt": "RemoteNet 的 gui.exe 是旧的了，你重新编译一份换上，换完确认一下新 exe 真的在跑。",
+    "expected_output": "PATH 前置 go-sdk + ucrt64、产物 gui.new.exe、swap_gui.ps1 换名重启、wininfo 验收、提醒系统代理残留。",
+    "expectations": {
+      "with": "7/7",
+      "without": "5/7"
+    }
+  },
+  {
+    "id": 4,
+    "name": "new-interactive-block",
+    "prompt": "给 RemoteNet 客户端加一个『批量导入证书』按钮：点开文件选择器可以多选 .pem，选完在下面列出文件名。界面风格要跟现在一致。",
+    "expected_output": "沿用既有按钮/卡片样式与 theme.Padding 行距规则、窗口只加高、列表可滚动、补测试、不新造颜色。",
+    "expectations": {
+      "with": "6/6",
+      "without": "5/6"
+    }
+  },
+  {
+    "id": 5,
+    "name": "hover-color-fix",
+    "prompt": "客户端那个红色的『连接』按钮，鼠标移上去以后看着像变灰了、像按钮失效了一样。帮我修一下，顺便说明为什么会出现这个效果。",
+    "expected_output": "根因是不透明浅灰整块覆盖底色（ButtonHoverDeepColorName）；修法用半透明黑 14% 叠色（白卡与深色面板都成立），并顺带对齐按压/禁用/焦点。",
+    "expectations": {}
+  },
+  {
+    "id": 6,
+    "name": "unify-component-style",
+    "prompt": "我们客户端的按钮、输入框、下拉框、勾选框，看久了总觉得风格不统一；你把这套界面里所有组件的样式和鼠标交互都理一遍，固化下来，以后加新控件照着它做。",
+    "expected_output": "按六态框架与五族结构模板给全控件规范：13 号等宽字阶、圆角 8/10、焦点圈透明是刻意、悬停叠色公式、光标归属，并固化到 theme.go 令牌 + references 文档 + 约束测试。",
+    "expectations": {}
+  },
+  {
+    "id": 7,
+    "name": "metrics-and-native-bounds",
+    "prompt": "连接明细里那三个列表的滚动条又细又浅，几乎看不见；状态圆点上悬停弹出的提示方块也太方了，想做成圆角胶囊；『删除配置』弹的确认框有点小、两个按钮挤在一起。你先把这个现状说清楚（每个数值现在是多少、由哪段代码决定、哪些是 Fyne 默认、哪些是我们自己覆盖的），再给改法。另外我还想把托盘右键菜单的字号换成界面里那种 13 号，能办到吗？",
+    "expected_output": "逐项给出确切数值与出处：滚动条 SizeNameScrollBar=12 / Small=3（Fyne 默认，仓库只覆盖颜色 #D5D8DD，小容器 6px 且未滚动隐藏）；气泡圆角=SizeNamePopupRadius 默认 5（改它影响所有弹层）、延迟 tipDelay=600ms、偏移 (14,20)、宽 420；对话框内边距 padWidth=32/padHeight=16、按钮居中贴底、圆角 SizeNameDialogRadius 默认 10；并明确指出托盘右键菜单是 Win32 原生菜单（systray_windows.go 的 CreatePopupMenu/SetMenuItemInfoW），字号改不了、只能改文案。",
+    "expectations": {}
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "c83c5902-30bf-4303-af92-ba4481d8ff5c",
+  "path": "drawio",
+  "path_key": "drawio",
+  "enabled": true,
+  "tags": [
+    "图表工具"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/jgraph/drawio-mcp.git",
+    "subpath": "plugins/claude-code/skills/drawio",
+    "branch": "main"
+  }
+}
