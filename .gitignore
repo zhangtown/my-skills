@@ -19,9 +19,10 @@ kimi-pptx/scripts/kimi_ppt_dsl.pyz
 kimi-pptx-swarm/scripts/kimi_ppt_dsl.pyz
 
 # ---- 手工维护：本地大资产，绝不入库（勿删；skills-manager 的 auto backup 曾清掉过）----
+# 注意：不要忽略 /.skills-manager/ 本身 —— 那里的 protocol.json / skills/<uuid>.json 是 skills-manager
+# 的合并元数据，已被 git 跟踪且每次 sync 都会提交，整目录忽略会挡掉将来新生成的元数据。
 /qwen-tts/
 /qwen-tts__skillhub/
-/.skills-manager/
 *.safetensors
 venv/
 
