@@ -52,6 +52,17 @@
 - `pdf` 技能已被同步删除，统一用 `kimi-pdf`（各端遗留的 `pdf` 死链已于 2026-09-17 清理）
 - `AGENTS.md`/`.disable_to_model_invocation_migration.json` 等根目录散文件是配置/标记，不是技能
 
+### 本机暂存区 `.staging/`（不入库）
+
+库根 `.staging/` 放**“从库里撤下、但本机还要留着”**的整批技能，已在 `.gitignore` 里忽略（`/.staging/`）。
+
+- **必须点开头**：`rewire-skills.py` 把「非点开头的一级目录」当作技能，改成 `_staging` 会被扫成技能名，还可能被 `--link-missing` 链进各端
+- 当前内容：`.staging/bensz-suite/` —— 27 个 `author: bensz` 第三方技能（nsfc-* 11 / paper-* 4 / research-* 9 / complete-example / make-latex-model / transfer-old-latex-to-new），
+  2026-09-17 依用户决定移入（拿 `nsfc-humanization` 实测论证报告，效果一般，先本地保存）。
+  撤下前入库版本 `42376e1`，快照 `~/.skills-manager/backups/bensz-suite-20260917-1057.tar.gz`（18 MB），
+  各端 135 条 junction 已 `--apply --prune` 摘除。恢复办法见 `.staging/bensz-suite/README.md`
+- 这批技能**从来没被 adopt**，所以 App 技能库列表（42 个已纳管）不受影响
+
 ## ⚠️ 契约联动（speech-visual-html 专属）
 
 `speech-visual-html` 实现的「ztEdit 原生格式」契约正本在另一个仓库：`https://github.com/zhangtown/Html-ZT-Edit`（WORKFLOW.md「二、数据模型」，本机 `D:\Program Files\html-zt-edit`，若已 clone）。
