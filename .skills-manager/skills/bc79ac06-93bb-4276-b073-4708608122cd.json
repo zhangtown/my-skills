@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "bc79ac06-93bb-4276-b073-4708608122cd",
+  "path": "zt-fyne-desktop-ui",
+  "path_key": "zt-fyne-desktop-ui",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

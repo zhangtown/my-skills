@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "e2c6c0c0-c783-4735-8336-cf3d8bcf9ecf",
+  "path": "drawio2vsdx",
+  "path_key": "drawio2vsdx",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}
