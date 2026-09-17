@@ -4,7 +4,9 @@
   "path": "drawio",
   "path_key": "drawio",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "图表工具"
+  ],
   "source": {
     "type": "git",
     "ref": "https://github.com/jgraph/drawio-mcp.git",

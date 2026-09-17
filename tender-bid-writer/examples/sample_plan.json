@@ -1,0 +1,61 @@
+{
+  "meta": {
+    "project_name": "XX市国土空间基础信息平台建设项目",
+    "doc_type": "技术投标文件",
+    "bidder": "XX科技股份有限公司",
+    "tender_no": "XZC-2026-0123",
+    "date": "2026年6月"
+  },
+  "dictionary": {
+    "metrics": [
+      {"name": "并发数", "value": "≥1000", "keywords": ["并发"]},
+      {"name": "系统可用性", "value": "≥99.99%", "keywords": ["可用性"]},
+      {"name": "出图响应", "value": "≤2秒", "keywords": ["出图", "出图响应"]}
+    ],
+    "terms": [
+      {"canonical": "一张图", "forbidden": ["一张图平台", "空间一张图服务"]},
+      {"canonical": "数据底座", "forbidden": ["数据中台", "数据基座"]}
+    ],
+    "stack": [
+      {"role": "CPU", "value": "鲲鹏/飞腾"},
+      {"role": "操作系统", "value": "麒麟/统信UOS"},
+      {"role": "数据库", "value": "达梦/人大金仓"}
+    ],
+    "fixed": {"项目工期": "10个月"}
+  },
+  "templates": {
+    "子系统设计": ["功能说明", "技术实现", "关键指标", "架构/流程图"]
+  },
+  "chapters": [
+    {
+      "title": "项目理解与需求分析",
+      "sections": [
+        {"title": "建设目标", "brief": "解读采购需求，提出统一数据底座与一张图的总体建设目标。",
+         "scoring_points": ["项目理解"], "must_keywords": ["数据底座", "一张图", "业务协同"],
+         "template": null, "word_budget": 600, "elements": {"table": false, "figure": false}},
+        {"title": "需求与评分要点对应", "brief": "将评分标准逐条对应到各章节，用表格说明在哪一节应答。",
+         "scoring_points": ["响应招标要求"], "must_keywords": ["评分", "应答"],
+         "template": null, "word_budget": 500, "elements": {"table": true, "figure": false}}
+      ]
+    },
+    {
+      "title": "总体技术方案",
+      "sections": [
+        {"title": "数据接入", "brief": "多源异构数据汇聚的功能、实现与指标。",
+         "scoring_points": ["数据汇聚能力"], "must_keywords": ["数据接入", "并发"],
+         "template": "子系统设计", "word_budget": 700, "elements": {"table": false, "figure": true}},
+        {"title": "一张图服务", "brief": "统一空间数据服务的功能、实现与出图性能。",
+         "scoring_points": ["一张图服务"], "must_keywords": ["一张图", "出图响应", "可用性"],
+         "template": "子系统设计", "word_budget": 700, "elements": {"table": false, "figure": false}}
+      ]
+    },
+    {
+      "title": "安全与信创保障",
+      "sections": [
+        {"title": "国产化适配", "brief": "全栈信创选型与适配测试，提供适配清单。",
+         "scoring_points": ["信创适配"], "must_keywords": ["麒麟", "达梦", "自主可控"],
+         "template": null, "word_budget": 600, "elements": {"table": false, "figure": false}}
+      ]
+    }
+  ]
+}

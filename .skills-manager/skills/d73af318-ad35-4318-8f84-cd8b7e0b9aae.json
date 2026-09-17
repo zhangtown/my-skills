@@ -4,7 +4,10 @@
   "path": "qiaomu-libgen-downloader",
   "path_key": "qiaomu-libgen-downloader",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "工具",
+    "标书"
+  ],
   "source": {
     "type": "skillssh",
     "ref": "joeseesun/qiaomu-libgen-downloader/qiaomu-libgen-downloader",
