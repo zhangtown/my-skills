@@ -4,6 +4,8 @@
   "skill_id": "5265e390-7af9-496c-9316-e22373637b35",
   "sort_order": 7,
   "tools": {
+    "claude_code": true,
+    "codebuddy": true,
     "deepseek_harness": true,
     "kimi": true,
     "pi": true,
