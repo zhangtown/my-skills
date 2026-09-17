@@ -4,13 +4,13 @@
   "skill_id": "1c769948-510f-4cd8-9683-23b6e23ae464",
   "sort_order": 38,
   "tools": {
-    "claude_code": true,
-    "codebuddy": true,
+    "claude_code": false,
+    "codebuddy": false,
     "codex": false,
     "deepseek_harness": false,
     "kimi": false,
     "pi": true,
     "workbuddy": false,
-    "zcode": true
+    "zcode": false
   }
 }
