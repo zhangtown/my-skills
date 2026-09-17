@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "49c52d98-e5fa-4f72-b4e6-70841b00d643",
+  "path": "tender-bid-writer",
+  "path_key": "tender-bid-writer",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}
