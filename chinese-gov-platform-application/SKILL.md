@@ -8,7 +8,7 @@ description: Fill Chinese government innovation platform application documents (
 
 Use this skill when the user needs to fill out Chinese government application documents for R&D platforms, innovation centers, key laboratories, engineering centers, or similar technology/innovation platform recognition programs (政府科技/创新平台申报，如产业技术工程化中心、重点实验室、工程研究中心、企业技术中心、专精特新等申报). Also use when the user mentions "申报", "申请报告", "填写标黄章节", "填写模板", "申请报告大纲", "工程化中心", "重点实验室", or provides a DOCX template with highlighted/blank sections alongside source company materials.
 
-This skill is distinct from `bid-proposal` (which covers procurement/tender bidding 投标/标书) and `report-writing` (which covers general reports). It specifically handles the workflow of:
+This skill is distinct from `tender-bid-writer` / `zt-biaoshu-skill` (which cover procurement/tender bidding 投标/标书). It specifically handles the workflow of:
 - Analyzing source company materials (investment reports, company profiles, technical documents)
 - Reading government application notifications/requirements (PDFs)
 - Filling highlighted/blank sections in a formal application template DOCX
@@ -101,6 +101,6 @@ Use this skill when the user asks to:
 
 ## Related Skills
 
-- `bid-proposal`: Use for procurement/tender bidding documents (投标/标书/招标文件), indicator matching, and bid annotations — NOT for platform application documents.
-- `docx`: Use for general DOCX creation, editing, repair, and validation.
-- `report-writing`: Use for long-form industry reports, policy briefs, or market analysis — NOT for filling government application templates.
+- `tender-bid-writer`: Use for writing the full bid document body from requirements or an outline and typesetting it to Word (写标书/投标文件正文成稿、暗标排版) — NOT for platform application documents.
+- `zt-biaoshu-skill`: Use for line-by-line technical indicator responses, deviation tables, commitment letters, and indicator annotations (逐条响应、偏离表、承诺函、指标批注) — NOT for platform application documents.
+- `kimi-docx`: Use for general DOCX creation, editing, repair, and validation.
