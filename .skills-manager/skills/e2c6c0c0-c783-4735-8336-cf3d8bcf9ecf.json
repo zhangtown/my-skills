@@ -4,7 +4,9 @@
   "path": "drawio2vsdx",
   "path_key": "drawio2vsdx",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "图表工具"
+  ],
   "source": {
     "type": "local",
     "ref": null,

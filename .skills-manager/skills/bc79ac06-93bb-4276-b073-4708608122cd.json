@@ -4,7 +4,9 @@
   "path": "zt-fyne-desktop-ui",
   "path_key": "zt-fyne-desktop-ui",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "设计前端"
+  ],
   "source": {
     "type": "local",
     "ref": null,
