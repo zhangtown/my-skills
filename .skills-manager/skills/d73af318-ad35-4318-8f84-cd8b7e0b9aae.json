@@ -5,6 +5,7 @@
   "path_key": "qiaomu-libgen-downloader",
   "enabled": true,
   "tags": [
+    "办公文档",
     "工具"
   ],
   "source": {

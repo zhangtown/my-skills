@@ -5,7 +5,8 @@
   "path_key": "grill-me",
   "enabled": true,
   "tags": [
-    "工具"
+    "工具",
+    "经典skill"
   ],
   "source": {
     "type": "git",

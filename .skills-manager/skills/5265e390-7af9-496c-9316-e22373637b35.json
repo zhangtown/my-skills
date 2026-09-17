@@ -5,7 +5,8 @@
   "path_key": "skill-creator",
   "enabled": true,
   "tags": [
-    "工具"
+    "工具",
+    "经典skill"
   ],
   "source": {
     "type": "skillssh",

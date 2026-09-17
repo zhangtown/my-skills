@@ -5,7 +5,7 @@
   "path_key": "usage-probe",
   "enabled": true,
   "tags": [
-    "工具"
+    "PIDECK工具"
   ],
   "source": {
     "type": "import",
