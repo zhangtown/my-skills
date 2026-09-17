@@ -4,7 +4,9 @@
   "path": "pideck-doctor",
   "path_key": "pideck-doctor",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "PIDECK工具"
+  ],
   "source": {
     "type": "local",
     "ref": null,

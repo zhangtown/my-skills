@@ -4,7 +4,9 @@
   "path": "visio-skill",
   "path_key": "visio-skill",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "图表工具"
+  ],
   "source": {
     "type": "local",
     "ref": null,

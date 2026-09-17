@@ -4,7 +4,9 @@
   "path": "drawio-academic-skills",
   "path_key": "drawio-academic-skills",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "图表工具"
+  ],
   "source": {
     "type": "local",
     "ref": null,
