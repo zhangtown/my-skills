@@ -1,6 +1,15 @@
 ---
 name: win-mingw-toolchain-bootstrap
-description: This skill should be used when a Windows machine needs a working mingw-w64 GCC toolchain to build CGo-based Go programs (e.g. Fyne GUI) and GitHub release zips are throttled by the corporate proxy at ~5 KB/s. It downloads the exact set of msys2 ucrt64 packages from the Tsinghua mirror (verified 5 MB/s in this sandbox), stitches them into a self-contained project-local `.toolchain/` directory that just works for `CGO_ENABLED=1 go build`, and documents the two non-obvious blockers: missing UCRT API-set forwarders (`api-ms-win-*.dll`, found only in `C:\Windows\System32\downlevel\`) and missing math-library runtimes (gmp/mpfr/mpc/isl/zstd/zlib/libiconv). Use when GUI builds fail with `error while loading shared libraries: api-ms-win-crt-utility-l1-1-0.dll` or when w64devkit / MSYS2 download is too slow.
+description: >-
+  This skill should be used when a Windows machine needs a working mingw-w64 GCC toolchain to
+  build CGo-based Go programs (e.g. Fyne GUI) and GitHub release zips are throttled by the
+  corporate proxy at ~5 KB/s. It downloads the exact set of msys2 ucrt64 packages from the
+  Tsinghua mirror (verified 5 MB/s in this sandbox), stitches them into a self-contained
+  project-local `.toolchain/` directory that just works for `CGO_ENABLED=1 go build`, and
+  documents the two non-obvious blockers: missing UCRT API-set forwarders (`api-ms-win-*.dll`,
+  found only in `C:\Windows\System32\downlevel\`) and missing math-library runtimes
+  (gmp/mpfr/mpc/isl/zstd/zlib/libiconv). Use when GUI builds fail with `error while loading shared
+  libraries: api-ms-win-crt-utility-l1-1-0.dll` or when w64devkit / MSYS2 download is too slow.
 agent_created: true
 ---
 
