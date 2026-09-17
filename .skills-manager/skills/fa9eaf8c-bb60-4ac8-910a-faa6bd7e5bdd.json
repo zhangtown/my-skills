@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "fa9eaf8c-bb60-4ac8-910a-faa6bd7e5bdd",
+  "path": "drawio-academic-skills",
+  "path_key": "drawio-academic-skills",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

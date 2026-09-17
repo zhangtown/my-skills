@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "7178aaee-50f6-48b5-bd0f-563150a2c449",
+  "path": "win-mingw-toolchain-bootstrap",
+  "path_key": "win-mingw-toolchain-bootstrap",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

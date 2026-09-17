@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "49fc9815-be54-4f4c-9200-463ffe0d365d",
+  "path": "pideck-doctor",
+  "path_key": "pideck-doctor",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

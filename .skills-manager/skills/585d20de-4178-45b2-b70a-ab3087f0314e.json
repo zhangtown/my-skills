@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "585d20de-4178-45b2-b70a-ab3087f0314e",
+  "path": "visio-skill",
+  "path_key": "visio-skill",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}
