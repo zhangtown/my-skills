@@ -4,7 +4,9 @@
   "path": "tender-bid-writer",
   "path_key": "tender-bid-writer",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "标书"
+  ],
   "source": {
     "type": "local",
     "ref": null,
