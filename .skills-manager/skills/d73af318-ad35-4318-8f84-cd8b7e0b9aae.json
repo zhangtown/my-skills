@@ -5,8 +5,7 @@
   "path_key": "qiaomu-libgen-downloader",
   "enabled": true,
   "tags": [
-    "工具",
-    "标书"
+    "工具"
   ],
   "source": {
     "type": "skillssh",
