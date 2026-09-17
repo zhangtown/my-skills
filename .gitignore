@@ -26,13 +26,14 @@ kimi-pptx-swarm/scripts/kimi_ppt_dsl.pyz
 *.safetensors
 venv/
 
-# skills-manager: oversized skills excluded from backup (auto-managed)
-/qwen-tts/
-/.skills-manager/skills/1af82b45-ba71-4556-9d69-44007f301bc0.json
-# skills-manager: end oversized skills
 
 # ---- 本机暂存区 .staging/（手工维护；本地保留、绝不入库）----
 # 放“从库里撤下但本机还要留着”的整批技能（当前：bensz-suite，27 个）。
 # 必须点开头：rewire-skills.py 把「非点开头的一级目录」当作技能，改名为 _staging 会被扫成技能名。
 # 不要把这里的技能 link 给任何 Agent（2026-09-17 已摘除 135 条链接）；恢复办法见 .staging/bensz-suite/README.md。
 /.staging/
+
+# skills-manager: oversized skills excluded from backup (auto-managed)
+/qwen-tts/
+/.skills-manager/skills/1af82b45-ba71-4556-9d69-44007f301bc0.json
+# skills-manager: end oversized skills
