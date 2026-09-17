@@ -6,18 +6,32 @@
 
 | Agent | 目录 | 方式 |
 |---|---|---|
-| WorkBuddy | `~/.workbuddy/skills` | 每技能 junction → 本目录（另有 2 个本地专属技能：`win-mingw-toolchain-bootstrap` 已入库，`drawio.bak.*` 为历史备份） |
+| WorkBuddy | `~/.workbuddy/skills` | 每技能 junction → 本目录（唯一未入库的本地专属技能是 `docx-surgical-edit`） |
 | Claude | `~/.claude/skills` | 每技能 junction → 本目录 |
 | ZCode | `~/.zcode/skills` | 每技能 junction → 本目录 |
 | CodeBuddy | `~/.codebuddy/skills` | 每技能 junction → 本目录 |
 | Pi | `~/.pi/agent/skills` | 每技能 junction → 本目录 |
 | Skills CLI / ZCode 全局 | `~/.agents/skills` | 每技能 junction → 本目录（`npx skills add -g` 的落地目录） |
+| DeepSeek Harness | `~/.dsh/skills` | 每技能 junction → 本目录（skills-manager 里的 agent key 是 `deepseek_harness`） |
 
 ### 维护：检查 / 修复联接
 
-`python ~/.skills-manager/rewire-skills.py`（干跑，只打印计划）→ 加 `--apply` 执行；
-`--force 技能名` 用于强制用本库版本替换被取代的旧副本。脚本只会把**内容逐字节一致**的副本换成 junction，
-内容不同的会报 `CONFLICT` 并原样保留。**装完新技能后跑一次干跑**，输出 `ok: N` 且无 `REWIRE/CONFLICT` 即为健康。
+`python rewire-skills.py`（在库根目录；干跑，只打印计划 + 审计）→ 加 `--apply` 执行：
+
+| 参数 | 作用 |
+|---|---|
+| （无） | 干跑：打印计划与审计报告 |
+| `--apply` | 把“内容一致的副本”换成 junction、修好指错目标的 junction |
+| `--prune` | 删掉**目标已消失**的死链与**别名**（改名后的遗留链接）——只删链接，绝不动内容 |
+| `--link-missing` | 给“任何 Agent 都读不到”的库内技能补链接 |
+| `--link-dirs a,b` | 配合 `--link-missing`，只补进指定端 |
+| `--force 技能名` | 强制用本库版本替换被取代的旧副本（会 rmtree，慎用） |
+
+健康标准：结尾 `verify:` 那一行要 **`dead-links=0 aliases=0 conflicts=0 wrong-target=0 real-copies=0 orphans=0`**。
+内容差异只看**逻辑内容**（CRLF/LF 视为一致，2026-09-17 修）；真差异报 `CONFLICT` 并原样保留。
+
+**判断链接是否有效不要用 `os.path.isdir()`**：Windows 下断链 junction 的 `isdir` 是 False（这正是 2026-09-17 前
+报 `ok: 350` 全绿却漏掉 6 条死链的原因），要用 `os.path.lexists(p) and not os.path.exists(p)`。
 
 替换前各目录的原始内容保留在同级的 `*.bak-20260830` 里（Pi 的散装技能包移到 `~/.pi/agent/skill-packages/`）。
 
@@ -25,9 +39,17 @@
 
 - 每个子目录 = 一个技能（含 `SKILL.md`，frontmatter 需有 name/description/version）
 - `.gitignore` 排除了 `*.pyz`、`node_modules/` 等大文件（GitHub 单文件 100MB 上限）；换新机器后这些大文件需单独拷贝，技能文档内应注明
-- **本地大资产绝不入库**：`qwen-tts/`（约 3.7GB 模型权重 + venv）与安装器元数据 `.skills-manager/` 已在 `.gitignore` 手工屏蔽 ——
-  该块曾被 skills-manager 的 `auto backup` 自动提交删掉过，若发现 `git status` 冒出 `qwen-tts/` 或 UUID 命名的 `.json`，先把规则加回去再 `git add`
-- 2026-09 集中化时回收入库的技能：`drawio2vsdx`（自研）、`academic-search`、`drawio-academic-skills`、`visio-skill`、`win-mingw-toolchain-bootstrap`、`前端开发`；`drawio` 换为 bahayonghang v2.8.0（原 jgraph 单文件版见提交 `44d9cf9`）
+- **本地大资产绝不入库**：`qwen-tts/`、`qwen-tts__skillhub/`（约 3.7GB 模型权重 + venv，`*.safetensors`）已在 `.gitignore` 手工屏蔽 ——
+  该块曾被 skills-manager 的 `auto backup` 自动提交删掉过；若发现 `git status` 冒出 `qwen-tts/` 或 `*.safetensors`，先把规则加回去再 `git add`
+- **但 `.skills-manager/` 元数据必须入库（不要再加整目录忽略规则）**：它是 skills-manager 的合并协议
+  （`protocol.json` / `schema.json` / `skills/<uuid>.json` / `scenario-skills/`），每次 adopt/部署都会写入，
+  忽略它会让多机合并状态不同步（2026-09-17 已修掉这条误伤规则，提交 `fa4b8e3`）
+- 2026-09 集中化时回收入库的技能：`drawio2vsdx`（自研）、`academic-search`、`drawio-academic-skills`、`visio-skill`、`win-mingw-toolchain-bootstrap`、`frontend-dev`（原名 `前端开发`，已改名以与 SKILL.md 一致）；`drawio` 换为 bahayonghang v2.8.0（原 jgraph 单文件版见提交 `44d9cf9`）
+- **库里有目录 ≠ App 里显示**：skills-manager 的「技能库」只列**已 adopt**（DB 有记录）的技能。2026-09-17 收编了
+  `tender-bid-writer`（id `49c52d98-…`，6 端已部署）；其余 36 个目录是“裸躺”状态（各端可用、App 列表不显示）。
+  要收编：`skills-manager-cli.exe skills adopt <库外的副本路径>` —— 直接传库内路径会被拒（source == destination），
+  且 adopt 不会自动进预设/部署，需再 `presets add-skill Default <技能>` + `skills deploy --agent <各端> <技能>`
+- `pdf` 技能已被同步删除，统一用 `kimi-pdf`（各端遗留的 `pdf` 死链已于 2026-09-17 清理）
 - `AGENTS.md`/`.disable_to_model_invocation_migration.json` 等根目录散文件是配置/标记，不是技能
 
 ## ⚠️ 契约联动（speech-visual-html 专属）
