@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "6b06d6c9-d568-4ef2-9f90-f7fbecdee476",
+  "path": "fnos",
+  "path_key": "fnos",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}
