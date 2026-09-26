@@ -9,8 +9,8 @@
   ],
   "source": {
     "type": "git",
-    "ref": "https://github.com/jgraph/drawio-mcp.git",
-    "subpath": "plugins/claude-code/skills/drawio",
-    "branch": "main"
+    "ref": "bahayonghang/drawio-skills",
+    "subpath": "skills/drawio",
+    "branch": null
   }
 }
