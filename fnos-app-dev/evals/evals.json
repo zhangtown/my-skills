@@ -1,0 +1,38 @@
+{
+  "skill_name": "fnos-app-dev",
+  "evals": [
+    {
+      "id": 0,
+      "name": "new-app-from-scratch",
+      "prompt": "我要做个新的飞牛（fnOS）应用：把一个本地 Markdown 文件夹（里面还有图片附件）变成一个能在飞牛桌面上打开的笔记应用，数据要按 NAS 用户各自隔离，再加一个 6 位 PIN 保护，图标得有设计感。给我一份落地方案，并且把关键骨架文件直接写出来（包结构、manifest、生命周期脚本、打包脚本），最后告诉我怎么装到我的 NAS 上验证。",
+      "expected_output": "一份可执行的落地方案 + 骨架文件：正确的包结构（manifest/cmd/app/config/ICON*）、内嵌模式需要的 manifest 字段、图标四份路径与生成顺序、按 uid 隔离的数据目录、PIN + 令牌通道设计、install-local 部署与自检",
+      "files": [],
+      "expectations": [
+        "提到桌面入口相关字段（desktop_uidir / app/ui/config / desktop_applaunchname 任一）",
+        "四份图标路径至少写对 2 份（ICON.PNG、ICON_256.PNG、app/ui/images/icon_64.png、icon_256.png）",
+        "明确指出图标必须在 go build 之前生成（//go:embed 顺序问题）",
+        "数据按用户隔离：给出按 uid 分目录的布局（users/<uid> 或等价）",
+        "令牌必须有 URL 查询参数通道（不能只靠 Cookie/Header，iframe 与移动端会丢）",
+        "部署/升级用 install-local，并指出 install-fpk 对已安装应用无效",
+        "内嵌模式描述正确：走网关 + unix socket（或说明如何关闭应用自身授权）",
+        "没有明显错误建议（没有推荐 install-fpk 升级、没有把 PIN 存 localStorage、没有手工导出多尺寸图标）"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "upgrade-not-visible",
+      "prompt": "我给自己的飞牛应用发了一版更新，NAS 上的文件我都确认换过了，但同事说「打开还是旧的，图标也没变」。帮我系统地排查到底卡在哪一层，以及我要改什么才能让这种情况不再发生。",
+      "expected_output": "分层排查清单：客户端缓存（图标 URL 不带版本号）/ 应用中心内存态 / fpk 里嵌的构建产物 / install-fpk 空操作 / 版本登记与 health 端点核对",
+      "files": [],
+      "expectations": [
+        "提到客户端缓存 + 用无痕窗口验证",
+        "提到图标 URL 不带版本号/被长缓存",
+        "提到 install-fpk 对已安装应用是空操作，必须 install-local",
+        "提到 fpk 里嵌的是打包那一刻的前端/二进制产物（要先构建再打包）",
+        "提到应用中心图标/清单是进程内缓存，改完需要重启或触发重扫",
+        "提到逐层 md5/字节核对服务端文件（应用目录、@appcenter、静态接口）",
+        "没有无关或有害建议（如让用户重装整个系统、清空 NAS 数据）"
+      ]
+    }
+  ]
+}
