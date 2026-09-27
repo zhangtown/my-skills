@@ -110,6 +110,7 @@ description: 把服务或工具做成飞牛 fnOS 应用（fpk 包）并装进应
 | `references/pack-and-deploy.md` | 打包与升级流程、版本号策略、回滚、部署后的验收清单 |
 | `references/troubleshoot.md` | 症状 → 根因 → 验证：装了没生效、图标不刷新、版本不登记、PIN 循环、桌面点不开、静态资源 404 |
 | `references/ui-pitfalls.md` | 应用界面自身的坑：右键菜单过长、移动端横向溢出、升级后用户看不到新界面 |
+| `evals/RESULTS.md` | 本技能的一次真实对比实测：带技能 8/8 与 7/7，不带技能 6/8 与 5/7；漏掉的正是「图标要在 `go build` 前生成」「令牌要留 URL 参数通道」「`install-fpk` 是空操作」「fpk 嵌的是打包那刻的产物」 |
 
 ## 五、可复制脚本
 
