@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "9a04b644-8821-44b4-a636-6d14b7edb65f",
+  "path": "fnos-app-dev",
+  "path_key": "fnos-app-dev",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/zhangtown/my-skills.git",
+    "subpath": "fnos-app-dev",
+    "branch": null
+  }
+}

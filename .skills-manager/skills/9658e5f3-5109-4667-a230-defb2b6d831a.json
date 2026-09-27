@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "9658e5f3-5109-4667-a230-defb2b6d831a",
+  "path": "skills-dev",
+  "path_key": "skills-dev",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/zhangtown/my-skills.git",
+    "subpath": "skills-dev",
+    "branch": null
+  }
+}
