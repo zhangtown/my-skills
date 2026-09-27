@@ -38,9 +38,24 @@
 ## 四、库里有目录 ≠ App 里显示
 
 skills-manager 的图形界面只列**已 adopt**（数据库有记录）的技能；裸放在库里的技能各端能用、App 列表里看不到。
-要收编：`skills-manager-cli.exe skills adopt <库外副本路径>`（传库内路径会被拒绝）→
-`presets add-skill Default <技能>` → `skills deploy --agent <各端> <技能>`。
-日常开发技能时**不必**做这三步——各端的 junction 已经能让它生效。
+
+收编要传**库外的那份副本**（传库内路径会被拒绝；adopt 本身不复制文件，只登记，`central_path` 仍指向库里那份）：
+
+```bash
+CLI=~/AppData/Local/skills-manager/skills-manager-cli.exe
+# 1) 登记：外部副本路径 + 指定 git 源（带 --git-url 才会有"检查更新"能力，否则 source_type=local）
+"$CLI" skills adopt --dry-run --git-url https://github.com/zhangtown/my-skills.git \
+        --git-subpath <技能名> <库外副本>/<技能名>        # 先干跑，看到 reason="ready" 再去掉 --dry-run
+# 2) 加入预置 + 部署到各端（已安装且启用的代理才需要）
+"$CLI" presets add-skill Default <技能名>
+"$CLI" skills deploy --agent <代理key> <技能名>            # 可一次传多个技能名；代理 key 见 skills agents list
+# 3) 核对
+"$CLI" skills list --json | grep -A3 <技能名>             # 看 source_type=git、presets、deployed_to
+"$CLI" skills check <技能名>                              # last_check_error 应为 null
+```
+
+登记会在 `skills/.skills-manager/{skills,scenario-skills}/` 生成 JSON 元数据——**这些要一起提交**，否则换台机器 App 里就看不到。
+日常开发技能时**不必**每次走这三步——各端的 junction 已经能让它生效，纳管是"让 App 认识它"这一步。
 
 ## 五、改动后的自检
 
