@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "3338032a-3533-41c1-a53c-4e1df801aca3",
+  "path": "huashu-art-motion",
+  "path_key": "huashu-art-motion",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "skillssh",
+    "ref": "alchaincyf/huashu-art-motion/huashu-art-motion",
+    "subpath": null,
+    "branch": null
+  }
+}
