@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "f5d0672d-35f4-4498-ad95-751ecd3fe6f0",
+  "path": "tender-bid-review",
+  "path_key": "tender-bid-review",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}
