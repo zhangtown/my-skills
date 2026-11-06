@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "a94f68aa-c1bb-4a13-9ffe-0c9a9b178d4b",
+  "path": "pdf-to-docx",
+  "path_key": "pdf-to-docx",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "skillssh",
+    "ref": "claude-office-skills/skills/pdf-to-docx",
+    "subpath": "pdf-to-docx",
+    "branch": null
+  }
+}
